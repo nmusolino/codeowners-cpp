@@ -1,0 +1,8 @@
+# CMake output
+cmake-build-*
+
+# emacs backup files
+*~
+
+# CLion IDE metadata
+.idea  
