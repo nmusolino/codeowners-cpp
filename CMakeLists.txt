@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 ## External dependencies
 add_subdirectory(external/googletest)
-
+add_subdirectory(external/libgit2)
 
 ## codeowners library
 add_library(codeowners
