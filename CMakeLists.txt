@@ -7,18 +7,20 @@ project(codeowners-cpp
 set(CMAKE_CXX_STANDARD 17)
 
 
-## LIBRARIES
+## External dependencies
+add_subdirectory(external/googletest)
 
-# codeowners library
+
+## codeowners library
 add_library(codeowners
 	    include/codeowners/codeowners.hpp
 	    src/codeowners.cpp)
 
 target_include_directories(codeowners
 			   PUBLIC include)
-	       	
 
-## UNIT TEST SUITE
+
+## Unit test suite
 enable_testing()
 add_subdirectory(tests)
 
