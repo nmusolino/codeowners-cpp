@@ -4,8 +4,8 @@
 #include <git2/index.h>
 #include <git2/repository.h>
 
-#include <memory>
 #include <iostream>
+#include <memory>
 
 namespace co {
 
@@ -26,25 +26,21 @@ repository_ptr make_repository_ptr(const fs::path& repo_root)
 {
     ::git_repository* repo = nullptr;
     int error = ::git_repository_open_ext(&repo, repo_root.c_str(), /*flags*/ 0, /*ceiling dirs*/ nullptr);
-    if (error)
-    {
+    if (error) {
         using namespace std::string_literals;
-        throw repository_not_found_error{"Could not find git repository at "s + repo_root.string()};
+        throw repository_not_found_error { "Could not find git repository at "s + repo_root.string() };
     }
     assert(repo);
     return repository_ptr(repo, ::git_repository_free);
 }
-
-
 
 index_ptr make_index_ptr(::git_repository* repo)
 {
     assert(repo);
     ::git_index* index = nullptr;
     int error = ::git_repository_index(&index, repo);
-    if (error)
-    {
-        throw co::error{"Error getting index: libgit2 error code: " + std::to_string(error)};
+    if (error) {
+        throw co::error { "Error getting index: libgit2 error code: " + std::to_string(error) };
     }
     assert(index);
     return index_ptr(index, ::git_index_free);
@@ -76,6 +72,7 @@ struct repository_impl {
         }
         return paths;
     }
+
 private:
     ::git_index* index() const { return m_index_ptr.get(); }
 
@@ -83,7 +80,6 @@ private:
     repository_ptr m_repo_ptr;
     index_ptr m_index_ptr;
 };
-
 
 repository::repository(const fs::path& repository_root)
     : m_impl { std::make_unique<repository_impl>(repository_root) }

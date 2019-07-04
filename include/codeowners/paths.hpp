@@ -9,10 +9,10 @@ namespace fs = boost::filesystem;
 
 namespace co {
 
-    fs::path touch(const fs::path &p)
-    {
-        std::ofstream ofs{p.string()};
-        return p;
-    }
+fs::path touch(const fs::path& p)
+{
+    std::ofstream ofs { p.string() };
+    return p;
+}
 
-}  /* end namespace 'co' */
+} /* end namespace 'co' */
