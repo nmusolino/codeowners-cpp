@@ -30,6 +30,9 @@ target_link_libraries(codeowners
         )
 target_link_libraries(codeowners PRIVATE git2)
 
+## Executables
+add_subdirectory(apps)
+
 ## Unit test suite
 enable_testing()
 add_subdirectory(tests)
