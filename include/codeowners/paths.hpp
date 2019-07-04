@@ -11,6 +11,7 @@ namespace co {
 
 fs::path touch(const fs::path& p)
 {
+    /* TODO: raise if dirname does not exist */
     std::ofstream ofs { p.string() };
     return p;
 }

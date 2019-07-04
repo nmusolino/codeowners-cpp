@@ -1,4 +1,5 @@
 #include <codeowners/codeowners.hpp>
+#include <codeowners/paths.hpp>
 
 #include <git2/global.h> /* git_libgit2_{init,shutdown} functions */
 #include <git2/index.h>
@@ -13,6 +14,21 @@ struct libgit_handle {
     libgit_handle() { ::git_libgit2_init(); }
     ~libgit_handle() { ::git_libgit2_shutdown(); }
 };
+
+std::optional<fs::path> codeowners_file(const fs::path& repo_root)
+{
+    const char* basename = "CODEOWNERS";
+    for (const auto& dir : {"", "docs", ".github"})
+    {
+        fs::path prospective_path = repo_root / dir / basename;
+        if (fs::exists(prospective_path))
+        {
+            return prospective_path;
+        }
+    }
+    return std::nullopt;
+}
+
 
 /* Module-level global to ensure that init/shutdown functions are called. */
 namespace {

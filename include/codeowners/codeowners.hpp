@@ -1,7 +1,9 @@
 #pragma once
 
 #include "codeowners/paths.hpp"
+
 #include <memory>
+#include <optional>
 
 namespace co {
 
@@ -26,6 +28,7 @@ class repository {
 public:
     repository(const fs::path& repository_root);
     ~repository();
+    static repository find(const fs::path& path);
 
     bool contains(const fs::path& path) const;
     std::vector<fs::path> index_paths() const;
@@ -36,5 +39,8 @@ private:
 
     std::unique_ptr<repository_impl> m_impl;
 };
+
+std::optional<fs::path> codeowners_file(const fs::path& repo_root);
+
 
 } /* end namespace 'co' */

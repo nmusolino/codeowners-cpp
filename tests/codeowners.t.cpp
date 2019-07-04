@@ -47,7 +47,7 @@ namespace testing {
         return repository_root;
     }
 
-    TEST(PathsTest, Touch)
+    TEST(paths_test, touch)
     {
         fs::path p = temp_directory() / "sample_file";
         EXPECT_FALSE(fs::exists(p));
@@ -56,7 +56,23 @@ namespace testing {
         EXPECT_TRUE(fs::is_regular_file(p));
     }
 
-    TEST(CodeownersTest, TestRepositoryConstructibleFromChildPaths)
+    TEST(codeowners_test, test_codeowners_file)
+    {
+        fs::path repo_root = temp_directory() / "sample_repository";
+        fs::create_directories(repo_root);
+
+        EXPECT_FALSE(codeowners_file(repo_root).has_value());
+
+        fs::path actual_path = repo_root / "CODEOWNERS";
+        co::touch(actual_path);
+
+        std::optional<fs::path> result = codeowners_file(repo_root);
+        ASSERT_TRUE(result.has_value())
+            << "actual_path: " << actual_path << " (exists: " << std::boolalpha << fs::exists(actual_path) << ")";
+        EXPECT_EQ(*result, actual_path);
+    };
+
+    TEST(codeowners_test, repository_constructible_from_child)
     {
         fs::path repo_root = temp_directory() / "sample_repository";
         populate_sample_repository(repo_root);
@@ -65,9 +81,9 @@ namespace testing {
         repository { repo_root };
         repository { repo_root / "dir_a" };
         repository { repo_root / "dir_a" / "file_0" };
-    }
+    };
 
-    TEST(CodeownersTest, TestRepositoryContains)
+    TEST(codeowners_test, repository_contains)
     {
         fs::path repo_root = temp_directory() / "sample_repository";
         populate_sample_repository(repo_root);
