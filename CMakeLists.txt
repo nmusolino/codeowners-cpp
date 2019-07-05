@@ -11,6 +11,8 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 ## External dependencies
 add_subdirectory(external/googletest)
 add_subdirectory(external/libgit2)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/external/sanitizers-cmake/cmake" ${CMAKE_MODULE_PATH})
+find_package(Sanitizers)
 
 # Boost 1.67 is the version available on Travis Mac OS X VMs.
 find_package(Boost 1.67 COMPONENTS filesystem program_options REQUIRED)
@@ -32,6 +34,7 @@ target_link_libraries(codeowners
         PUBLIC Boost_filesystem
         )
 target_link_libraries(codeowners PRIVATE git2)
+add_sanitizers(codeowners)
 
 ## Executables
 add_subdirectory(apps)

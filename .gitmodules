@@ -4,3 +4,9 @@
 [submodule "external/libgit2"]
 	path = external/libgit2
 	url = https://github.com/libgit2/libgit2.git
+[submodule "sanitizers-cmake"]
+	path = sanitizers-cmake
+	url = https://github.com/arsenm/sanitizers-cmake.git
+[submodule "external/sanitizers-cmake"]
+	path = external/sanitizers-cmake
+	url = https://github.com/arsenm/sanitizers-cmake.git
