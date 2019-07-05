@@ -7,7 +7,7 @@
 
 namespace co {
 
-class repository_impl;
+struct repository_impl;
 
 class error : public std::exception {
 public:

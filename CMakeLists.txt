@@ -19,6 +19,8 @@ add_library(codeowners
         include/codeowners/codeowners.hpp
         src/codeowners.cpp include/codeowners/paths.hpp)
 
+target_compile_options(codeowners PRIVATE -Werror -Wall -Wextra)
+
 message( "LIBGIT2_INCLUDES: ${LIBGIT2_INCLUDES}" )
 
 target_include_directories(codeowners
