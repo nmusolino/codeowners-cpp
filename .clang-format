@@ -1,2 +1,6 @@
----
 BasedOnStyle: WebKit
+BreakBeforeBraces: Allman
+NamespaceIndentation: None
+SpacesBeforeTrailingComments: 2
+SpacesInAngles: false
+Standard: Cpp11
