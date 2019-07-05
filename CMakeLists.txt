@@ -5,7 +5,8 @@ project(codeowners-cpp
         DESCRIPTION "Command-line tool for listing code owners in a Git repository")
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_VERBOSE_MAKEFILE on)
+
+set(CODEOWNERS_COMPILE_OPTIONS -Werror -Wall -Wextra)
 
 
 ## External dependencies
@@ -21,19 +22,15 @@ find_package(Boost 1.67 COMPONENTS filesystem program_options REQUIRED)
 add_library(codeowners
         include/codeowners/codeowners.hpp
         src/codeowners.cpp include/codeowners/paths.hpp)
-
-target_compile_options(codeowners PRIVATE -Werror -Wall -Wextra)
-
-message( "LIBGIT2_INCLUDES: ${LIBGIT2_INCLUDES}" )
-
 target_include_directories(codeowners
         PUBLIC include
         PRIVATE external/libgit2/include
         )
 target_link_libraries(codeowners
         PUBLIC Boost_filesystem
+        PRIVATE git2
         )
-target_link_libraries(codeowners PRIVATE git2)
+target_compile_options(codeowners PRIVATE ${CODEOWNERS_COMPILE_OPTIONS})
 add_sanitizers(codeowners)
 
 ## Executables
