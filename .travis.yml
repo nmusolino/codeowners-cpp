@@ -1,24 +1,19 @@
 compiler:
   - clang
+  - gcc
 
 matrix:
   include:
     - os: osx
       osx_image: xcode10.1  # macOS 10.13
-      # On Mac OS X, CC and CXX already point to clang.  This is done
-      # for consistency with other Mac OS X 
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++ && brew install cmake || brew upgrade cmake"
-
-  include:
-    - os: osx
-      osx_image: xcode10.1
-      env:
-        - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9 && brew install gcc@9 && brew install cmake || brew upgrade cmake"
 
 before_install:
     - echo "${MATRIX_EVAL}"
     - eval "${MATRIX_EVAL}"
+
+install:
+    - brew install cmake || brew upgrade cmake
+    - brew install boost || brew upgrade boost
 
 script:
     - mkdir build
