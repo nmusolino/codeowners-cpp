@@ -27,28 +27,17 @@ BUILD_DIR = $(BUILD_ROOT)/$(BUILD_TYPE)-$(SANITIZER)
 BUILD_MAKEFILE = $(BUILD_DIR)/Makefile
 SANITIZER_OPTIONS = $(shell [ $(SANITIZER) = "NONE" ] && echo '' || echo "-DSANITIZE_$(SANITIZER)=On")
 
-# INITIAL CMAKE-RELATED TARGETS
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
-## cmake            Generate Makefiles using CMake
-cmake: $(BUILD_MAKEFILE)
-$(BUILD_MAKEFILE): $(BUILD_DIR) CMakeLists.txt tests/CMakeLists.txt
-	cmake -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) $(SANITIZER_OPTIONS)
+MAIN_EXECUTABLE = $(BUILD_DIR)/apps/ls-owners
+TEST_EXECUTABLE = $(BUILD_DIR)/tests/codeowners_tests
 
 ## ls-owners        Build ls-owners executable
-MAIN_EXECUTABLE = $(BUILD_DIR)/apps/ls-owners
 $(MAIN_EXECUTABLE): $(BUILD_MAKEFILE) $(SOURCE_FILES)
 	cmake --build $(BUILD_DIR) -j$(j) --target ls-owners
 
 ls-owners: $(MAIN_EXECUTABLE)
 	@echo Executable: $(MAIN_EXECUTABLE)
 
-TEST_EXECUTABLE = $(BUILD_DIR)/tests/codeowners_tests
-
-
 # TEST TARGETS
-.PHONY: test test_asan test_msan test_ubsan
-
 $(TEST_EXECUTABLE): $(BUILD_DIR) $(BUILD_MAKEFILE) $(SOURCE_FILES) $(TEST_FILES)
 	cmake --build $(BUILD_DIR) -j$(j) --target codeowners_tests
 
@@ -56,6 +45,11 @@ $(TEST_EXECUTABLE): $(BUILD_DIR) $(BUILD_MAKEFILE) $(SOURCE_FILES) $(TEST_FILES)
 test: $(TEST_EXECUTABLE) 
 	@echo Executable: $(TEST_EXECUTABLE)
 	$(TEST_EXECUTABLE)
+
+## all              Build ls-owners app and run tests
+all: ls-owners test
+
+.PHONY: test test_asan test_msan test_ubsan
 
 ## test_asan        Build and run tests with Address Sanitizer 
 test_asan: SANITIZER = ADDRESS
@@ -78,6 +72,16 @@ test_tsan: $(TEST_EXECUTABLE)
 
 ## test_sanitized   Build and run unit tests with address sanitizer, memory sanitizer, and UB sanitizer
 test_sanitized: test_asan test_msan test_ubsan
+
+
+# INITIAL CMAKE-RELATED TARGETS
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+## cmake            Generate Makefiles using CMake
+cmake: $(BUILD_MAKEFILE)
+$(BUILD_MAKEFILE): $(BUILD_DIR) CMakeLists.txt tests/CMakeLists.txt
+	cmake -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) $(SANITIZER_OPTIONS)
 
 
 # CLEAN TARGETS
