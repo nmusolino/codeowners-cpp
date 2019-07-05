@@ -17,6 +17,7 @@ matrix:
         - MATRIX_EVAL="brew install gcc@9 && CC=gcc-9 && CXX=g++-9 && brew install boost"
 
 before_install:
+    - echo "Running: ${MATRIX_EVAL}"
     - eval "${MATRIX_EVAL}"
 
 script:
