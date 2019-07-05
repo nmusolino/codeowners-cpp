@@ -8,13 +8,13 @@ matrix:
       # On Mac OS X, CC and CXX already point to clang.  This is done
       # for consistency with other Mac OS X 
       env:
-        - MATRIX_EVAL="brew install cmake && CC=clang && CXX=clang++"
+        - MATRIX_EVAL="CC=clang && CXX=clang++ && brew install cmake || brew upgrade cmake"
 
   include:
     - os: osx
       osx_image: xcode10.1
       env:
-        - MATRIX_EVAL="brew install cmake gcc@9 && CC=gcc-9 && CXX=g++-9"
+        - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9 && brew install gcc@9 && brew install cmake || brew upgrade cmake"
 
 before_install:
     - echo "${MATRIX_EVAL}"
