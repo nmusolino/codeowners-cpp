@@ -1,4 +1,5 @@
 # CMake output
+build*
 cmake-build-*
 
 # emacs backup files
