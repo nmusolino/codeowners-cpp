@@ -1,15 +1,12 @@
+language: cpp
 compiler:
   - clang
   - gcc
-
-matrix:
-  include:
-    - os: osx
-      osx_image: xcode10.1  # macOS 10.13
+os: osx
+osx_image: xcode10.1  # macOS 10.13
 
 install:
-    - brew install cmake || brew upgrade cmake
-    - brew install boost || brew upgrade boost
+    - brew install --force boost
 
 script:
     - mkdir build
