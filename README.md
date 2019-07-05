@@ -36,6 +36,16 @@ docs/*        @doc-user
 
 *Coming soon.*
 
+## Acknowledgements
+
+Codeowners-cpp uses the following libraries, which are included as git submodules:
+
+* [libgit2](https://libgit2.org): "a portable, pure C implementation of the Git core methods."
+* [santizers-cmake](https://github.com/arsenm/sanitizers-cmake): "CMake module to enable sanitizers for binary targets."
+* [Google Test](https://github.com/google/googletest): Google testing and mocking framework.
+
+The contributors to these external projects are kindly acknowledged.
+
 ## License
 
 This project is licensed under the GNU General Public License, version 3.  See the [LICENSE](LICENSE) file for details.
