@@ -18,19 +18,24 @@ find_package(Sanitizers)
 # Boost 1.67 is the version available on Travis Mac OS X VMs.
 find_package(Boost 1.67 COMPONENTS filesystem program_options REQUIRED)
 
+## Dummy target for compiler options
+add_library(codeowners_compile_options src/null.cpp)
+target_compile_options(codeowners_compile_options
+        INTERFACE -Werror -Wall -Wextra)
+
 ## codeowners library
 add_library(codeowners
         include/codeowners/codeowners.hpp
-        src/codeowners.cpp include/codeowners/paths.hpp)
+        include/codeowners/paths.hpp
+        src/codeowners.cpp)
 target_include_directories(codeowners
         PUBLIC include
         PRIVATE external/libgit2/include
         )
 target_link_libraries(codeowners
         PUBLIC Boost_filesystem
-        PRIVATE git2
+        PRIVATE codeowners_compile_options git2
         )
-target_compile_options(codeowners PRIVATE ${CODEOWNERS_COMPILE_OPTIONS})
 add_sanitizers(codeowners)
 
 ## Executables
