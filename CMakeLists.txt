@@ -12,7 +12,8 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 add_subdirectory(external/googletest)
 add_subdirectory(external/libgit2)
 
-find_package(Boost 1.70 COMPONENTS filesystem program_options REQUIRED)
+# Boost 1.67 is the version available on Travis Mac OS X VMs.
+find_package(Boost 1.67 COMPONENTS filesystem program_options REQUIRED)
 
 ## codeowners library
 add_library(codeowners
