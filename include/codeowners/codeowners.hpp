@@ -42,5 +42,19 @@ private:
 
 std::optional<fs::path> codeowners_file(const fs::path& repo_root);
 
+struct file_pattern {
+    const std::string pattern;
+    const bool invert = false;
+
+    bool match(const fs::path& path) const { return match(path.c_str()); }
+    bool match(const std::string& path) const { return match(path.c_str()); }
+    bool match(const char* path) const;
+};
+
+struct owner_rule {
+    file_pattern pattern;
+    std::vector<std::string> owners;
+};
+
 
 } /* end namespace 'co' */

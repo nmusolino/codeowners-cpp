@@ -3,6 +3,7 @@
 
 #include <git2/global.h> /* git_libgit2_{init,shutdown} functions */
 #include <git2/index.h>
+#include <git2/pathspec.h>
 #include <git2/repository.h>
 
 #include <iostream>
@@ -18,17 +19,14 @@ struct libgit_handle {
 std::optional<fs::path> codeowners_file(const fs::path& repo_root)
 {
     const char* basename = "CODEOWNERS";
-    for (const auto& dir : {"", "docs", ".github"})
-    {
+    for (const auto& dir : { "", "docs", ".github" }) {
         fs::path prospective_path = repo_root / dir / basename;
-        if (fs::exists(prospective_path))
-        {
+        if (fs::exists(prospective_path)) {
             return prospective_path;
         }
     }
     return std::nullopt;
 }
-
 
 /* Module-level global to ensure that init/shutdown functions are called. */
 namespace {
@@ -37,6 +35,42 @@ namespace {
 
 using repository_ptr = std::unique_ptr<::git_repository, void (*)(::git_repository*)>;
 using index_ptr = std::unique_ptr<::git_index, void (*)(::git_index*)>;
+
+template <typename T>
+struct resource_traits;
+
+#define SPECIALIZE_RESOURCE_TRAITS(RESOURCE)                     \
+    template <>                                                  \
+    struct resource_traits<RESOURCE> {                           \
+        using value_type = RESOURCE;                             \
+        using deleter_type = void (*)(value_type*);              \
+        constexpr static deleter_type deleter = RESOURCE##_free; \
+        constexpr static const char* resource_name = #RESOURCE;  \
+    };
+
+SPECIALIZE_RESOURCE_TRAITS(git_repository);
+SPECIALIZE_RESOURCE_TRAITS(git_index);
+SPECIALIZE_RESOURCE_TRAITS(git_pathspec);
+
+#undef SPECIALIZE_RESOURCE_TRAITS
+
+template <typename T>
+using resource_ptr = std::unique_ptr<T, typename resource_traits<T>::deleter_type>;
+
+template <typename T, typename F, typename... Args>
+resource_ptr<T> make_resource_ptr(F f, Args... args)
+{
+    using traits = resource_traits<T>;
+    T* resource = nullptr;
+    int error = f(&resource, std::forward<Args>(args)...);
+    if (error) {
+        using namespace std::string_literals;
+        throw co::error { "Error while creating "s + traits::resource_name
+            + ": error code " + std::to_string(error) };
+    }
+    assert(resource);
+    return resource_ptr<T>(resource, resource_traits<T>::deleter);
+};
 
 repository_ptr make_repository_ptr(const fs::path& repo_root)
 {
@@ -109,5 +143,16 @@ repository_impl* repository::impl() { return m_impl.get(); }
 
 bool repository::contains(const fs::path& path) const { return m_impl->contains(path); }
 std::vector<fs::path> repository::index_paths() const { return impl()->index_paths(); }
+
+bool file_pattern::match(const char* path) const
+{
+    char* pattern_data[] = {const_cast<char*>(pattern.data())};  // Promise this is okay.
+
+    ::git_strarray pattern_strarray {pattern_data, 1};
+    auto pathspec_ptr = make_resource_ptr<::git_pathspec>(::git_pathspec_new, &pattern_strarray);
+
+    const bool matched = ::git_pathspec_matches_path(pathspec_ptr.get(), GIT_PATHSPEC_DEFAULT, path);
+    return matched ^ invert;
+}
 
 } /* end namespace 'co' */

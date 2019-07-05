@@ -99,5 +99,55 @@ namespace testing {
         ASSERT_FALSE(repo.contains(sample_file));
     }
 
+    TEST(codeowners_test, pattern_match_bare_star)
+    {
+        file_pattern pat { "*" };
+        EXPECT_TRUE(pat.match("foo"));
+        EXPECT_TRUE(pat.match("foo/"));
+        EXPECT_TRUE(pat.match("foo/bar"));
+        EXPECT_TRUE(pat.match("foo/bar/baz"));
+    }
+
+    TEST(codeowners_test, pattern_match_star_extension)
+    {
+        file_pattern pat { "*.cpp" };
+        EXPECT_TRUE(pat.match("file.cpp"));
+        EXPECT_TRUE(pat.match("include/file.cpp"));
+        EXPECT_TRUE(pat.match("include/utils/file.cpp"));
+
+        EXPECT_FALSE(pat.match("include"));
+        EXPECT_FALSE(pat.match("file.hpp"));
+    }
+
+    TEST(codeowners_test, pattern_match_leading_slash)
+    {
+        file_pattern pat { "/build/logs/" };
+        EXPECT_TRUE(pat.match("build/logs"));
+        EXPECT_TRUE(pat.match("build/logs/log1.txt"));
+
+        EXPECT_FALSE(pat.match("parent/build/logs"));
+        EXPECT_FALSE(pat.match("parent/build/logs"));
+    }
+
+    TEST(codeowners_test, pattern_match_trailing_star)
+    {
+        file_pattern pat { "docs/*" };
+        EXPECT_TRUE(pat.match("docs/getting-started.md"));
+    }
+
+    TEST(codeowners_test, pattern_match_anywhere_dir)
+    {
+        file_pattern pat { "apps/" };
+        EXPECT_TRUE(pat.match("apps"));
+    }
+
+    TEST(codeowners_test, DISABLED_nonimplemented_patterns)
+    {
+        // These are known failures.
+        EXPECT_TRUE(file_pattern{"apps/"}.match("parent/apps"));
+
+        EXPECT_FALSE(file_pattern{"docs/*"}.match("docs/build-app/troubleshooting.md"));
+    }
+
 } /* end namespace 'testing' */
 } /* end namespace 'co' */
