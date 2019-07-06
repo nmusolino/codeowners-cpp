@@ -17,7 +17,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/external/sanitizers-cmake/cmake" ${CM
 find_package(Sanitizers)
 
 # Boost 1.67 is the version available on Travis Mac OS X VMs.
-find_package(Boost 1.67 COMPONENTS filesystem program_options REQUIRED)
+find_package(Boost 1.60 COMPONENTS filesystem program_options REQUIRED)
 
 ## codeowners library
 add_library(codeowners

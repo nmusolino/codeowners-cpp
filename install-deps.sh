@@ -12,9 +12,17 @@ case "$TRAVIS_OS_NAME" in
 	brew install boost || brew upgrade boost
 	;;
     linux)
-	echo "install-deps.sh: no-op for Linux" 
+	which python
+	python --version	
+	which pip
+	pip --version
+	sudo apt purge cmake
+	pip install cmake
 	;;
     *)
 	echo "install-deps.sh: Unknown TRAVIS_OS_NAME: $TRAVIS_OS_NAME"
 	exit 1
 esac
+
+which cmake
+cmake --version
