@@ -4,6 +4,9 @@ project(codeowners-cpp
         VERSION 0.1.0
         DESCRIPTION "Command-line tool for listing code owners in a Git repository")
 
+# Enable MACOS_RPATH policy
+cmake_policy(SET CMP0042 NEW)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
