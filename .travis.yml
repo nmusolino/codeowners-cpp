@@ -5,15 +5,8 @@ compiler:
 os:
   - osx
   - linux
-
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-    - os: osx
-      osx_image: xcode10.1
-  allow_failures:
-    - os: linux
+dist: trusty
+osx_image: xcode10.1
     
 install:
     - ./install-deps.sh
