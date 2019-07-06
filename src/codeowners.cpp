@@ -9,9 +9,11 @@
 #include <iostream>
 #include <memory>
 
-namespace co {
+namespace co
+{
 
-struct libgit_handle {
+struct libgit_handle
+{
     libgit_handle() { ::git_libgit2_init(); }
     ~libgit_handle() { ::git_libgit2_shutdown(); }
 };
@@ -19,9 +21,11 @@ struct libgit_handle {
 std::optional<fs::path> codeowners_file(const fs::path& repo_root)
 {
     const char* basename = "CODEOWNERS";
-    for (const auto& dir : { "", "docs", ".github" }) {
+    for (const auto& dir : { "", "docs", ".github" })
+    {
         fs::path prospective_path = repo_root / dir / basename;
-        if (fs::exists(prospective_path)) {
+        if (fs::exists(prospective_path))
+        {
             return prospective_path;
         }
     }
@@ -29,8 +33,9 @@ std::optional<fs::path> codeowners_file(const fs::path& repo_root)
 }
 
 /* Module-level global to ensure that init/shutdown functions are called. */
-namespace {
-    static libgit_handle handle;
+namespace
+{
+static libgit_handle handle;
 } /* end anonymous namespace */
 
 using repository_ptr = std::unique_ptr<::git_repository, void (*)(::git_repository*)>;
@@ -41,7 +46,8 @@ struct resource_traits;
 
 #define SPECIALIZE_RESOURCE_TRAITS(RESOURCE)                     \
     template <>                                                  \
-    struct resource_traits<RESOURCE> {                           \
+    struct resource_traits<RESOURCE>                             \
+    {                                                            \
         using value_type = RESOURCE;                             \
         using deleter_type = void (*)(value_type*);              \
         constexpr static deleter_type deleter = RESOURCE##_free; \
@@ -63,7 +69,8 @@ resource_ptr<T> make_resource_ptr(F f, Args... args)
     using traits = resource_traits<T>;
     T* resource = nullptr;
     int error = f(&resource, std::forward<Args>(args)...);
-    if (error) {
+    if (error)
+    {
         using namespace std::string_literals;
         throw co::error { "Error while creating "s + traits::resource_name
             + ": error code " + std::to_string(error) };
@@ -76,7 +83,8 @@ repository_ptr make_repository_ptr(const fs::path& repo_root)
 {
     ::git_repository* repo = nullptr;
     int error = ::git_repository_open_ext(&repo, repo_root.c_str(), /*flags*/ 0, /*ceiling dirs*/ nullptr);
-    if (error) {
+    if (error)
+    {
         using namespace std::string_literals;
         throw repository_not_found_error { "Could not find git repository at "s + repo_root.string() };
     }
@@ -89,14 +97,16 @@ index_ptr make_index_ptr(::git_repository* repo)
     assert(repo);
     ::git_index* index = nullptr;
     int error = ::git_repository_index(&index, repo);
-    if (error) {
+    if (error)
+    {
         throw co::error { "Error getting index: libgit2 error code: " + std::to_string(error) };
     }
     assert(index);
     return index_ptr(index, ::git_index_free);
 }
 
-struct repository_impl {
+struct repository_impl
+{
     repository_impl(const fs::path& repo_root)
         : m_root(repo_root)
         , m_repo_ptr(make_repository_ptr(repo_root))
@@ -116,7 +126,8 @@ struct repository_impl {
         std::size_t entry_count = ::git_index_entrycount(m_index_ptr.get());
         std::vector<fs::path> paths;
         paths.reserve(entry_count);
-        for (std::size_t i = 0; i < entry_count; i++) {
+        for (std::size_t i = 0; i < entry_count; i++)
+        {
             auto* entry = ::git_index_get_byindex(index(), i);
             paths.emplace_back(entry->path);
         }
@@ -146,9 +157,9 @@ std::vector<fs::path> repository::index_paths() const { return impl()->index_pat
 
 bool file_pattern::match(const char* path) const
 {
-    char* pattern_data[] = {const_cast<char*>(pattern.data())};  // Promise this is okay.
+    char* pattern_data[] = { const_cast<char*>(pattern.data()) };  // Promise this is okay.
 
-    ::git_strarray pattern_strarray {pattern_data, 1};
+    ::git_strarray pattern_strarray { pattern_data, 1 };
     auto pathspec_ptr = make_resource_ptr<::git_pathspec>(::git_pathspec_new, &pattern_strarray);
 
     const bool matched = ::git_pathspec_matches_path(pathspec_ptr.get(), GIT_PATHSPEC_DEFAULT, path);

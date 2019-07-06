@@ -7,7 +7,8 @@
 
 namespace fs = boost::filesystem;
 
-namespace co {
+namespace co
+{
 
 fs::path touch(const fs::path& p)
 {

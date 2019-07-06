@@ -5,11 +5,13 @@
 #include <memory>
 #include <optional>
 
-namespace co {
+namespace co
+{
 
 struct repository_impl;
 
-class error : public std::exception {
+class error : public std::exception
+{
 public:
     error(const std::string& message)
         : m_message { message } {};
@@ -19,12 +21,14 @@ private:
     std::string m_message;
 };
 
-class repository_not_found_error : public error {
+class repository_not_found_error : public error
+{
 public:
     using error::error;
 };
 
-class repository {
+class repository
+{
 public:
     repository(const fs::path& repository_root);
     ~repository();
@@ -42,7 +46,8 @@ private:
 
 std::optional<fs::path> codeowners_file(const fs::path& repo_root);
 
-struct file_pattern {
+struct file_pattern
+{
     const std::string pattern;
     const bool invert = false;
 
@@ -51,10 +56,10 @@ struct file_pattern {
     bool match(const char* path) const;
 };
 
-struct owner_rule {
+struct owner_rule
+{
     file_pattern pattern;
     std::vector<std::string> owners;
 };
-
 
 } /* end namespace 'co' */
