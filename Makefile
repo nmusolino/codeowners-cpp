@@ -25,7 +25,7 @@ TEST_FILES = $(wildcard tests/*.hpp) $(wildcard tests/*.cpp)
 BUILD_ROOT = build_output
 BUILD_DIR = $(BUILD_ROOT)/$(BUILD_TYPE)-$(SANITIZER)
 BUILD_MAKEFILE = $(BUILD_DIR)/Makefile
-SANITIZER_OPTIONS = $(shell [ $(SANITIZER) = "NONE" ] && echo '' || echo "-DSANITIZE_$(SANITIZER)=On")
+SANITIZER_OPTIONS = $(shell [[ $(SANITIZER) =~ "ADDRESS|MEMORY|THREAD|UNDEFINED" ]] && echo "-DSANITIZE_$(SANITIZER)=On")
 
 MAIN_EXECUTABLE = $(BUILD_DIR)/apps/ls-owners
 TEST_EXECUTABLE = $(BUILD_DIR)/tests/codeowners_tests
@@ -37,6 +37,12 @@ $(MAIN_EXECUTABLE): $(BUILD_MAKEFILE) $(SOURCE_FILES)
 ls-owners: $(MAIN_EXECUTABLE)
 	@echo Executable: $(MAIN_EXECUTABLE)
 
+## build            Synonym for 'ls-owners'
+build: ls-owners
+
+## all              Build ls-owners app and run tests
+all: ls-owners test
+
 # TEST TARGETS
 $(TEST_EXECUTABLE): $(BUILD_DIR) $(BUILD_MAKEFILE) $(SOURCE_FILES) $(TEST_FILES)
 	cmake --build $(BUILD_DIR) -j$(j) --target codeowners_tests
@@ -46,8 +52,13 @@ test: $(TEST_EXECUTABLE)
 	@echo Executable: $(TEST_EXECUTABLE)
 	$(TEST_EXECUTABLE)
 
-## all              Build ls-owners app and run tests
-all: ls-owners test
+scan-build: SANITIZER = SCAN-BUILD
+scan-build: scan-build-command = scan-build -v -k -o $(BUILD_DIR)/scan-build-reports/
+scan-build: $(BUILD_DIR)
+	cmake -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
+	cmake --build $(BUILD_DIR) -j$(j) --target git2
+	cmake --build $(BUILD_DIR) -j$(j) --target gtest_main
+	scan-build -v -k -o $(BUILD_DIR)/scan-build-reports/ cmake --build $(BUILD_DIR) -j$(j)
 
 .PHONY: test test_asan test_msan test_ubsan
 
