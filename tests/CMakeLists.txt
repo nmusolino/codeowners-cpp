@@ -1,8 +1,13 @@
+# TEST EXECUTABLE
 add_executable(codeowners_tests
         codeowners.t.cpp)
+
+target_compile_options(codeowners_tests PRIVATE ${STRICT_COMPILE_OPTIONS})
 target_link_libraries(codeowners_tests
-        PRIVATE codeowners codeowners_compile_options gtest_main)
+	codeowners
+	gtest_main
+)
 add_sanitizers(codeowners_tests)
 
 add_test(NAME codeowners_tests
-        COMMAND codeowners_tests)
+	 COMMAND codeowners_tests)
