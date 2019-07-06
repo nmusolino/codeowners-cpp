@@ -9,9 +9,6 @@ install:
     - ./install-deps.sh
 
 script:
-    - mkdir build
-    - cd build
-    - cmake ..
-    - cmake --build .
-    - ctest
-    
+    - make all
+    - make test_ubsan
+    - which git-clang-format || true
