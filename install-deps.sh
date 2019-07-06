@@ -13,8 +13,7 @@ case "$TRAVIS_OS_NAME" in
 	brew install boost || brew upgrade boost
 	;;
     linux)
-	echo "install-deps.sh: dependency installation not implemented for Linux" 
-	exit 1
+	echo "install-deps.sh: no-op for Linux" 
 	;;
     *)
 	echo "install-deps.sh: Unknown TRAVIS_OS_NAME: $TRAVIS_OS_NAME"
