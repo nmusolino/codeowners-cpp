@@ -89,6 +89,8 @@ test_tsan: $(TEST_EXECUTABLE)
 ## test_sanitized   Build and run unit tests with address sanitizer, memory sanitizer, and UB sanitizer
 test_sanitized: test_asan test_msan test_ubsan
 
+## all              Equivalent to 'ls-owners' and 'test'
+all: ls-owners test
 
 # CLEAN TARGETS
 ## clean            Remove output associated with this build type and sanitizer
