@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# 
+#
 # Pre-commit hook.  Contains elements of git's sample pre-commit hook.
-# 
+#
 fail_with_message () {
     echo ""
     echo "Aborting commit in pre-commit hook: $1"
