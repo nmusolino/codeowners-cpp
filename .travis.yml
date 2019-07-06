@@ -6,8 +6,7 @@ os: osx
 osx_image: xcode10.1  # macOS 10.13
 
 install:
-    - brew install cmake || brew upgrade cmake
-    - brew install boost || brew upgrade boost
+    - ./install-deps.sh
 
 script:
     - mkdir build
