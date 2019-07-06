@@ -101,3 +101,9 @@ clean:
 clean_all:
 	rm -rf $(BUILD_ROOT)
 
+## HOOKS TARGETS
+.git/hooks/pre-commit:  hooks/pre-commit
+	cp hooks/pre-commit .git/hooks/pre-commit
+
+install_hooks: .git/hooks/pre-commit
+
