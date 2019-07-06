@@ -5,6 +5,7 @@ project(codeowners-cpp
         DESCRIPTION "Command-line tool for listing code owners in a Git repository")
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(STRICT_COMPILE_OPTIONS -Werror -Wall -Wextra)
 

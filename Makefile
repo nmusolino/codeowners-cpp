@@ -35,7 +35,7 @@ $(MAIN_EXECUTABLE): $(BUILD_MAKEFILE) $(SOURCE_FILES)
 	cmake --build $(BUILD_DIR) -j$(j) --target ls-owners
 
 ls-owners: $(MAIN_EXECUTABLE)
-	@echo Executable: $(MAIN_EXECUTABLE)
+	@echo \\033[92m$(MAIN_EXECUTABLE)\\033[0m
 
 ## build            Synonym for 'ls-owners'
 build: ls-owners
@@ -48,8 +48,8 @@ $(TEST_EXECUTABLE): $(BUILD_DIR) $(BUILD_MAKEFILE) $(SOURCE_FILES) $(TEST_FILES)
 	cmake --build $(BUILD_DIR) -j$(j) --target codeowners_tests
 
 ## test             Run C++ unit test suite
-test: $(TEST_EXECUTABLE) 
-	@echo Executable: $(TEST_EXECUTABLE)
+test: $(TEST_EXECUTABLE)
+	@echo \\033[92m$(TEST_EXECUTABLE)\\033[0m
 	$(TEST_EXECUTABLE)
 
 scan-build: SANITIZER = SCAN-BUILD
