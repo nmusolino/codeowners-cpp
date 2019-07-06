@@ -14,6 +14,10 @@ addons:
       - clang-format
       - cmake      
 
+matrix:
+  allow_failures:
+    - os: linux
+
 install:
     - ./install-deps.sh
 
