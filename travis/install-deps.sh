@@ -24,5 +24,10 @@ case "$TRAVIS_OS_NAME" in
 	exit 1
 esac
 
-which cmake
-cmake --version
+for program in make cmake $CC $CXX git-clang-format; do
+    which $program
+    $program --version
+done
+
+echo "Done installing dependencies."
+exit 0

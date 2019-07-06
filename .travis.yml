@@ -10,16 +10,18 @@ osx_image: xcode10.1
 
 addons:
   apt:
+    update: true
     packages:
       - clang-format
-      - cmake      
+      - make
+      - cmake
 
 matrix:
   allow_failures:
     - os: linux
 
 install:
-    - ./install-deps.sh
+    - ./travis/install-deps.sh
 
 script:
     - make all
