@@ -3,6 +3,8 @@
 This project is a C++ library and command-line application for identifying "code
 owners" within a project, based on Github's CODEOWNERS file convention.
 
+[![Build Status](https://travis-ci.com/nmusolino/codeowners-cpp.svg?branch=master)](https://travis-ci.com/nmusolino/codeowners-cpp)
+
 ## Background
 
 Github [introduced "code owners"](https://github.blog/2017-07-06-introducing-code-owners/)
