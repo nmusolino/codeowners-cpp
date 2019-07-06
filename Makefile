@@ -13,6 +13,7 @@ help: Makefile
 
 # USER-SETTABLE VARIABLES
 # Processes used during CMake build
+SHELL = /bin/bash
 j ?= 2
 BUILD_TYPE ?= Debug
 SANITIZER ?= NONE
@@ -25,7 +26,7 @@ TEST_FILES = $(wildcard tests/*.hpp) $(wildcard tests/*.cpp)
 BUILD_ROOT = build_output
 BUILD_DIR = $(BUILD_ROOT)/$(BUILD_TYPE)-$(SANITIZER)
 BUILD_MAKEFILE = $(BUILD_DIR)/Makefile
-SANITIZER_OPTIONS = $(shell [[ $(SANITIZER) =~ "ADDRESS|MEMORY|THREAD|UNDEFINED" ]] && echo "-DSANITIZE_$(SANITIZER)=On")
+SANITIZER_OPTIONS = $(shell [ $(SANITIZER) =~ "ADDRESS|MEMORY|THREAD|UNDEFINED" ] && echo "-DSANITIZE_$(SANITIZER)=On")
 
 MAIN_EXECUTABLE = $(BUILD_DIR)/apps/ls-owners
 TEST_EXECUTABLE = $(BUILD_DIR)/tests/codeowners_tests
