@@ -10,6 +10,7 @@ set(CODEOWNERS_COMPILE_OPTIONS -Werror -Wall -Wextra)
 
 
 ## External dependencies
+set(BUILD_CLAR OFF CACHE BOOL "")  # Disable test suite in libgit2
 add_subdirectory(external/googletest)
 add_subdirectory(external/libgit2)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/external/sanitizers-cmake/cmake" ${CMAKE_MODULE_PATH})
