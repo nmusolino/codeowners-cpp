@@ -13,5 +13,4 @@ install:
 
 script:
     - make all
-    - make test_ubsan
-    - which git-clang-format || true
+    - echo $(which git-clang-format)
