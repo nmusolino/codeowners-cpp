@@ -29,7 +29,8 @@ BUILD_DIR = $(BUILD_ROOT)/$(BUILD_TYPE)-$(SANITIZER)
 BUILD_MAKEFILE = $(BUILD_DIR)/Makefile
 SANITIZER_OPTIONS = $(shell [[ $(SANITIZER) =~ "ADDRESS|MEMORY|THREAD|UNDEFINED" ]] && echo "-DSANITIZE_$(SANITIZER)=On")
 
-
+##
+## BUILD TARGETS
 # INITIAL CMAKE-RELATED TARGETS
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
@@ -48,8 +49,8 @@ ls-owners: $(MAIN_EXECUTABLE)
 
 TEST_EXECUTABLE = $(BUILD_DIR)/tests/codeowners_tests
 
-
-# TEST TARGETS
+##
+## TEST TARGETS
 .PHONY: test test_asan test_msan test_ubsan
 
 $(TEST_EXECUTABLE): $(BUILD_DIR) $(BUILD_MAKEFILE) $(SOURCE_FILES) $(TEST_FILES)
@@ -92,7 +93,8 @@ test_sanitized: test_asan test_msan test_ubsan
 ## all              Equivalent to 'ls-owners' and 'test'
 all: ls-owners test
 
-# CLEAN TARGETS
+##
+## UTILITY TARGETS
 ## clean            Remove output associated with this build type and sanitizer
 clean:
 	rm -rf $(BUILD_DIR)
@@ -100,4 +102,10 @@ clean:
 ## clean_all        Remove output associated with all builds
 clean_all:
 	rm -rf $(BUILD_ROOT)
+
+.git/hooks/pre-commit:  hooks/pre-commit
+	cp hooks/pre-commit .git/hooks/pre-commit
+
+## install_hooks    Install git hooks into this repo's git directory
+install_hooks: .git/hooks/pre-commit
 
