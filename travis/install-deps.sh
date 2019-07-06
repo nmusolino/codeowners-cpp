@@ -16,8 +16,9 @@ case "$TRAVIS_OS_NAME" in
 	python --version	
 	which pip
 	pip --version
+	sudo apt-get install -y clang-format
 	sudo apt purge cmake
-	pip install cmake
+	sudo pip install cmake
 	;;
     *)
 	echo "install-deps.sh: Unknown TRAVIS_OS_NAME: $TRAVIS_OS_NAME"
