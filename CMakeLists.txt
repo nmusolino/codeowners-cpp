@@ -1,10 +1,14 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.14)
 
 project(codeowners-cpp
         VERSION 0.1.0
         DESCRIPTION "Command-line tool for listing code owners in a Git repository")
 
+# Enable MACOS_RPATH policy
+cmake_policy(SET CMP0042 NEW)
+
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(STRICT_COMPILE_OPTIONS -Werror -Wall -Wextra)
 
@@ -17,7 +21,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/external/sanitizers-cmake/cmake" ${CM
 find_package(Sanitizers)
 
 # Boost 1.67 is the version available on Travis Mac OS X VMs.
-find_package(Boost 1.67 COMPONENTS filesystem program_options REQUIRED)
+find_package(Boost 1.60 COMPONENTS filesystem program_options REQUIRED)
 
 ## codeowners library
 add_library(codeowners
