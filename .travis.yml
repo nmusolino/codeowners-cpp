@@ -14,7 +14,6 @@ addons:
     packages:
       - clang-format
       - make
-      - cmake
 
 matrix:
   allow_failures:
@@ -25,4 +24,3 @@ install:
 
 script:
     - make all
-    - echo $(which git-clang-format)

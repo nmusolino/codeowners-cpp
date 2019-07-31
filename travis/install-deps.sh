@@ -12,12 +12,8 @@ case "$TRAVIS_OS_NAME" in
 	brew install boost || brew upgrade boost
 	;;
     linux)
-	which python
-	python --version	
-	which pip
-	pip --version
-	sudo apt-get install -y clang-format
-	sudo apt purge cmake
+	sudo apt-get purge cmake
+	sudo apt-get remove -y cmake
 	sudo pip install --upgrade cmake
 	cmake --version
 	;;
@@ -27,6 +23,7 @@ case "$TRAVIS_OS_NAME" in
 esac
 
 for program in make cmake $CC $CXX; do
+    which $program
     $program --version
 done
 
