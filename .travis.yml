@@ -15,6 +15,7 @@ addons:
     packages:
       - clang-format
       - make
+      - libboost1.70-dev
     update: true
 
 matrix:
