@@ -10,10 +10,12 @@ osx_image: xcode10.1
 
 addons:
   apt:
-    update: true
+    sources:
+      - sourceline: 'ppa:mhier/libboost-latest'
     packages:
       - clang-format
       - make
+    update: true
 
 matrix:
   allow_failures:
