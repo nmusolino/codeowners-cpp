@@ -17,6 +17,7 @@ addons:
       - clang-format
       - make
       - g++-7
+      - libboost1.70
       - libboost1.70-dev
     update: true
 
