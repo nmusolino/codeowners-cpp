@@ -18,15 +18,15 @@ case "$TRAVIS_OS_NAME" in
 	pip --version
 	sudo apt-get install -y clang-format
 	sudo apt purge cmake
-	sudo pip install cmake
+	sudo pip install --upgrade cmake
+	cmake --version
 	;;
     *)
 	echo "install-deps.sh: Unknown TRAVIS_OS_NAME: $TRAVIS_OS_NAME"
 	exit 1
 esac
 
-for program in make cmake $CC $CXX git-clang-format; do
-    which $program
+for program in make cmake $CC $CXX; do
     $program --version
 done
 
