@@ -15,7 +15,9 @@ case "$TRAVIS_OS_NAME" in
 	sudo apt-get purge cmake
 	sudo apt-get remove -y cmake
 	sudo pip install --upgrade cmake
-	cmake --version
+	pip show cmake
+	PATH=/usr/local/bin:$PATH which cmake
+	PATH=/usr/local/bin:$PATH cmake --version
 	;;
     *)
 	echo "install-deps.sh: Unknown TRAVIS_OS_NAME: $TRAVIS_OS_NAME"

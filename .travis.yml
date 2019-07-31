@@ -23,4 +23,5 @@ install:
     - ./travis/install-deps.sh
 
 script:
+    - export PATH=/usr/local/bin:$PATH
     - make all
