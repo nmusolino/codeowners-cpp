@@ -12,9 +12,11 @@ addons:
   apt:
     sources:
       - sourceline: 'ppa:mhier/libboost-latest'
+      - ubuntu-toolchain-r-test
     packages:
       - clang-format
       - make
+      - g++-7
       - libboost1.70-dev
     update: true
 
