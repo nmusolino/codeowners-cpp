@@ -6,101 +6,81 @@ help: Makefile
 	@echo
 	@echo User-defined variables:
 	@echo "    BUILD_TYPE = Debug | Release | RelWithDebInfo | ..."
-	@echo "    SANITIZER  = NONE | ADDRESS | MEMORY | THREAD | UNDEFINED"
 	@echo
 	@echo Sample invocation:
-	@echo "    make BUILD_TYPE=debug SANITIZER=UNDEFINED ls-owners test"
+	@echo "    make BUILD_TYPE=debug ls-owners test test_asan"
 
 SHELL = /bin/bash
 
 # USER-SETTABLE VARIABLES
 # Processes used during CMake build
-j ?= 4
+j ?= 2
 BUILD_TYPE ?= Debug
-SANITIZER ?= NONE
 
 # SOURCE FILE ENUMERATION
+CMAKE_FILES = CMakeLists.txt tests/CMakeLists.txt
 SOURCE_FILES = $(wildcard include/codeowners/*) $(wildcard src/*)
 TEST_FILES = $(wildcard tests/*.hpp) $(wildcard tests/*.cpp) 
 
 # BUILD OUTPUT LOCATIONS
 BUILD_ROOT = build_output
-BUILD_DIR = $(BUILD_ROOT)/$(BUILD_TYPE)-$(SANITIZER)
-BUILD_MAKEFILE = $(BUILD_DIR)/Makefile
-SANITIZER_OPTIONS = $(shell [[ $(SANITIZER) =~ "ADDRESS|MEMORY|THREAD|UNDEFINED" ]] && echo "-DSANITIZE_$(SANITIZER)=On")
 
-##
-## BUILD TARGETS
-# INITIAL CMAKE-RELATED TARGETS
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
-## cmake            Generate Makefiles using CMake
-cmake: $(BUILD_MAKEFILE)
-$(BUILD_MAKEFILE): $(BUILD_DIR) CMakeLists.txt tests/CMakeLists.txt
-	cmake -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) $(SANITIZER_OPTIONS)
+$(BUILD_ROOT)/$(BUILD_TYPE)-%/Makefile : $(CMAKE_FILES)
+	@mkdir -p $(dir $@)
+	cmake -S . -B $(dir $@) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) $(SANITIZER_CONFIG_OPTION)
+	@echo "Created:  $@"
 
-## ls-owners        Build ls-owners executable
-MAIN_EXECUTABLE = $(BUILD_DIR)/apps/ls-owners
-$(MAIN_EXECUTABLE): $(BUILD_MAKEFILE) $(SOURCE_FILES)
-	cmake --build $(BUILD_DIR) -j$(j) --target ls-owners
+$(BUILD_ROOT)/$(BUILD_TYPE)-%/tests/codeowners_tests : $(BUILD_ROOT)/$(BUILD_TYPE)-%/Makefile $(SOURCE_FILES) $(TEST_FILES)
+	cmake --build $(dir $<) -j$(j) --target codeowners_tests		
+	@echo "Built:  $@"
 
-ls-owners: $(MAIN_EXECUTABLE)
-	@echo Executable: $(MAIN_EXECUTABLE)
+$(BUILD_ROOT)/$(BUILD_TYPE)-%/apps/ls-owners : $(BUILD_ROOT)/$(BUILD_TYPE)-%/Makefile $(SOURCE_FILES)
+	cmake --build $(dir $<) -j$(j) --target ls-owners
+	@echo "Built:  $@"
 
-TEST_EXECUTABLE = $(BUILD_DIR)/tests/codeowners_tests
+## ls-owners        Build ls-owners command-line utility
+ls-owners: $(BUILD_ROOT)/$(BUILD_TYPE)-nosan/apps/ls-owners
+	@echo "Built:  $<"
 
-##
-## TEST TARGETS
-.PHONY: test test_asan test_msan test_ubsan
 
-$(TEST_EXECUTABLE): $(BUILD_DIR) $(BUILD_MAKEFILE) $(SOURCE_FILES) $(TEST_FILES)
-	cmake --build $(BUILD_DIR) -j$(j) --target codeowners_tests
-
+# TESTS
 ## test             Run C++ unit test suite
+TEST_EXECUTABLE = $(BUILD_ROOT)/$(BUILD_TYPE)-nosan/tests/codeowners_tests
 test: $(TEST_EXECUTABLE) 
-	@echo Executable: $(TEST_EXECUTABLE)
 	$(TEST_EXECUTABLE)
 
-scan-build: SANITIZER = SCAN-BUILD
-scan-build: scan-build-command = scan-build -v -k -o $(BUILD_DIR)/scan-build-reports/
-scan-build: $(BUILD_DIR) $(BUILD_MAKEFILE)
-	cmake --build $(BUILD_DIR) -j$(j) --target git2
-	cmake --build $(BUILD_DIR) -j$(j) --target gtest_main
-	scan-build -v -k -o $(BUILD_DIR)/scan-build-reports/ cmake --build $(BUILD_DIR) -j$(j)
+all: test ls-owners
 
-## test_asan        Build and run tests with Address Sanitizer 
-test_asan: SANITIZER = ADDRESS
-test_asan: $(TEST_EXECUTABLE)
-	ASAN_OPTIONS=verbosity=1,exitcode=1 $(TEST_EXECUTABLE)
+ASAN_TEST_EXECUTABLE = $(BUILD_ROOT)/$(BUILD_TYPE)-asan/tests/codeowners_tests
+MSAN_TEST_EXECUTABLE = $(BUILD_ROOT)/$(BUILD_TYPE)-msan/tests/codeowners_tests
+UBSAN_TEST_EXECUTABLE = $(BUILD_ROOT)/$(BUILD_TYPE)-ubsan/tests/codeowners_tests
 
-## test_msan        Build and run tests with Memory Sanitizer 
-test_msan: SANITIZER = MEMORY
-test_msan: $(TEST_EXECUTABLE)
-	MSAN_OPTIONS=verbosity=1,exitcode=1 $(TEST_EXECUTABLE)
+test_asan_executable: $(ASAN_TEST_EXECUTABLE)
+test_asan_executable: SANITIZER_CONFIG_OPTION = -DSANITIZE_ADDRESS=On
 
-## test_ubsan       Build and run tests with Undefined Behavior Sanitizer 
-test_ubsan: SANITIZER = UNDEFINED
-test_ubsan: $(TEST_EXECUTABLE)
-	UBSAN_OPTIONS=verbosity=1,exitcode=1 $(TEST_EXECUTABLE)
+test_msan_executable: $(MSAN_TEST_EXECUTABLE)
+test_msan_executable: SANITIZER_CONFIG_OPTION = -DSANITIZE_MEMORY=On
 
-test_tsan: SANITIZER = THREAD
-test_tsan: $(TEST_EXECUTABLE)
-	TSAN_OPTIONS=verbosity=1,exitcode=1 $(TEST_EXECUTABLE)
+test_ubsan_executable: $(UBSAN_TEST_EXECUTABLE)
+test_ubsan_executable: SANITIZER_CONFIG_OPTION = -DSANITIZE_UNDEFINED=On
 
-## test_sanitized   Build and run unit tests with address sanitizer, memory sanitizer, and UB sanitizer
-test_sanitized: test_asan test_msan test_ubsan
+## test_asan        Run test suite with address sanitizer
+## test_msan        Run test suite with memory sanitizer
+## test_ubsan       Run test suite with undefined behavior sanitizer
+test_asan: test_asan_executable
+	ASAN_OPTIONS=verbosity=1,exitcode=1 $(ASAN_TEST_EXECUTABLE)
+test_msan: test_msan_executable
+	MSAN_OPTIONS=verbosity=1,exitcode=1 $(MSAN_TEST_EXECUTABLE)
+test_ubsan: test_ubsan_executable
+	UBSAN_OPTIONS=verbosity=1,exitcode=1 $(UBSAN_TEST_EXECUTABLE)
 
-## all              Equivalent to 'ls-owners' and 'test'
-all: ls-owners test
+.PHONY: test test_asan test_ubsan test_msan test_sanitizers
+## test_sanitizers  Run test suite with all sanitizers (lengthy)
+test_sanitizers: test test_asan test_ubsan test_msan
 
-##
-## UTILITY TARGETS
-## clean            Remove output associated with this build type and sanitizer
+# UTILITY TARGETS
+## clean            Remove all build output
 clean:
-	rm -rf $(BUILD_DIR)
-
-## clean_all        Remove output associated with all builds
-clean_all:
 	rm -rf $(BUILD_ROOT)
 
 .git/hooks/pre-commit:  hooks/pre-commit
@@ -108,4 +88,3 @@ clean_all:
 
 ## install_hooks    Install git hooks into this repo's git directory
 install_hooks: .git/hooks/pre-commit
-
