@@ -1,7 +1,6 @@
 #include <codeowners/codeowners.hpp>
 #include <codeowners/filesystem.hpp>
 
-#include <git2/global.h> /* git_libgit2_{init,shutdown} functions */
 #include <git2/index.h>
 #include <git2/pathspec.h>
 #include <git2/repository.h>
@@ -12,11 +11,6 @@
 namespace co
 {
 
-struct libgit_handle
-{
-    libgit_handle() { ::git_libgit2_init(); }
-    ~libgit_handle() { ::git_libgit2_shutdown(); }
-};
 
 std::optional<fs::path> codeowners_file(const fs::path& repo_root)
 {
@@ -32,11 +26,6 @@ std::optional<fs::path> codeowners_file(const fs::path& repo_root)
     return std::nullopt;
 }
 
-/* Module-level global to ensure that init/shutdown functions are called. */
-namespace
-{
-static libgit_handle handle;
-} /* end anonymous namespace */
 
 using repository_ptr = std::unique_ptr<::git_repository, void (*)(::git_repository*)>;
 using index_ptr = std::unique_ptr<::git_index, void (*)(::git_index*)>;
