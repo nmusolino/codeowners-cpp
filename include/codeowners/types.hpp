@@ -67,4 +67,29 @@ struct underlying_equality_comparable : equality_comparable<S>,
     }
 };
 
+template <typename S>
+struct ostreamable
+{
+    friend std::ostream& operator<<(std::ostream& os, const S& s)
+    {
+        os << s.value();
+        return os;
+    }
+};
+
+template <typename S>
+struct istreamable
+{
+    friend std::istream& operator>>(std::istream& is, S& s)
+    {
+        is >> s.value();
+        return is;
+    }
+};
+
+template <typename S>
+struct streamable : ostreamable<S>, istreamable<S>
+{
+};
+
 }  // end namespace 'co'
