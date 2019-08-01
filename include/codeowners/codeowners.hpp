@@ -1,6 +1,6 @@
 #pragma once
 
-#include "codeowners/paths.hpp"
+#include "codeowners/filesystem.hpp"
 
 #include <memory>
 #include <optional>

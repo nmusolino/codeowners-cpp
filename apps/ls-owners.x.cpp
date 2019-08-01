@@ -1,5 +1,5 @@
 #include <codeowners/codeowners.hpp>
-#include <codeowners/paths.hpp>
+#include <codeowners/filesystem.hpp>
 
 #include <boost/program_options.hpp>
 

@@ -1,5 +1,5 @@
 #include <codeowners/codeowners.hpp>
-#include <codeowners/paths.hpp>
+#include <codeowners/filesystem.hpp>
 
 #include <git2/global.h> /* git_libgit2_{init,shutdown} functions */
 #include <git2/index.h>
