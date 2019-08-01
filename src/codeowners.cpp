@@ -1,10 +1,7 @@
 #include <codeowners/codeowners.hpp>
-#include <codeowners/paths.hpp>
+#include <codeowners/errors.hpp>
+#include <codeowners/filesystem.hpp>
 
-#include <git2/global.h> /* git_libgit2_{init,shutdown} functions */
-#include <git2/index.h>
-#include <git2/pathspec.h>
-#include <git2/repository.h>
 
 #include <iostream>
 #include <memory>
@@ -12,12 +9,7 @@
 namespace co
 {
 
-struct libgit_handle
-{
-    libgit_handle() { ::git_libgit2_init(); }
-    ~libgit_handle() { ::git_libgit2_shutdown(); }
-};
-
+/*
 std::optional<fs::path> codeowners_file(const fs::path& repo_root)
 {
     const char* basename = "CODEOWNERS";
@@ -32,78 +24,7 @@ std::optional<fs::path> codeowners_file(const fs::path& repo_root)
     return std::nullopt;
 }
 
-/* Module-level global to ensure that init/shutdown functions are called. */
-namespace
-{
-static libgit_handle handle;
-} /* end anonymous namespace */
 
-using repository_ptr = std::unique_ptr<::git_repository, void (*)(::git_repository*)>;
-using index_ptr = std::unique_ptr<::git_index, void (*)(::git_index*)>;
-
-template <typename T>
-struct resource_traits;
-
-#define SPECIALIZE_RESOURCE_TRAITS(RESOURCE)                     \
-    template <>                                                  \
-    struct resource_traits<RESOURCE>                             \
-    {                                                            \
-        using value_type = RESOURCE;                             \
-        using deleter_type = void (*)(value_type*);              \
-        constexpr static deleter_type deleter = RESOURCE##_free; \
-        constexpr static const char* resource_name = #RESOURCE;  \
-    };
-
-SPECIALIZE_RESOURCE_TRAITS(git_repository);
-SPECIALIZE_RESOURCE_TRAITS(git_index);
-SPECIALIZE_RESOURCE_TRAITS(git_pathspec);
-
-#undef SPECIALIZE_RESOURCE_TRAITS
-
-template <typename T>
-using resource_ptr = std::unique_ptr<T, typename resource_traits<T>::deleter_type>;
-
-template <typename T, typename F, typename... Args>
-resource_ptr<T> make_resource_ptr(F f, Args... args)
-{
-    using traits = resource_traits<T>;
-    T* resource = nullptr;
-    int error = f(&resource, std::forward<Args>(args)...);
-    if (error)
-    {
-        using namespace std::string_literals;
-        throw co::error { "Error while creating "s + traits::resource_name
-            + ": error code " + std::to_string(error) };
-    }
-    assert(resource);
-    return resource_ptr<T>(resource, resource_traits<T>::deleter);
-};
-
-repository_ptr make_repository_ptr(const fs::path& repo_root)
-{
-    ::git_repository* repo = nullptr;
-    int error = ::git_repository_open_ext(&repo, repo_root.c_str(), /*flags*/ 0, /*ceiling dirs*/ nullptr);
-    if (error)
-    {
-        using namespace std::string_literals;
-        throw repository_not_found_error { "Could not find git repository at "s + repo_root.string() };
-    }
-    assert(repo);
-    return repository_ptr(repo, ::git_repository_free);
-}
-
-index_ptr make_index_ptr(::git_repository* repo)
-{
-    assert(repo);
-    ::git_index* index = nullptr;
-    int error = ::git_repository_index(&index, repo);
-    if (error)
-    {
-        throw co::error { "Error getting index: libgit2 error code: " + std::to_string(error) };
-    }
-    assert(index);
-    return index_ptr(index, ::git_index_free);
-}
 
 struct repository_impl
 {
@@ -117,7 +38,7 @@ struct repository_impl
     bool contains(const fs::path& path) const
     {
         fs::path relative_path = fs::relative(path, m_root);
-        auto* entry = ::git_index_get_bypath(m_index_ptr.get(), relative_path.c_str(), /* stage */ GIT_INDEX_STAGE_NORMAL);
+        auto* entry = ::git_index_get_bypath(m_index_ptr.get(), relative_path.c_str(), GIT_INDEX_STAGE_NORMAL);
         return entry != nullptr;
     }
 
@@ -165,5 +86,6 @@ bool file_pattern::match(const char* path) const
     const bool matched = ::git_pathspec_matches_path(pathspec_ptr.get(), GIT_PATHSPEC_DEFAULT, path);
     return matched ^ invert;
 }
+*/
 
-} /* end namespace 'co' */
+}  // end namespace 'co'

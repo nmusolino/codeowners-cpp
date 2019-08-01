@@ -1,5 +1,5 @@
 #include <codeowners/codeowners.hpp>
-#include <codeowners/paths.hpp>
+#include <codeowners/filesystem.hpp>
 
 #include <boost/program_options.hpp>
 
@@ -97,11 +97,9 @@ int main(int argc, const char* argv[])
     if (paths.empty())
         paths.push_back(current_path);
 
-    co::repository repo{options.repo_dir.value_or(current_path)};
-
-
-    for (const auto& path : repo.index_paths()) {
-        std::cout << path.c_str() << '\n';
-    }
+    //    co::repository repo{options.repo_dir.value_or(current_path)};
+    //    for (const auto& path : repo.index_paths()) {
+    //        std::cout << path.c_str() << '\n';
+    //    }
     return EXIT_SUCCESS;
 }
