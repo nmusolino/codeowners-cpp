@@ -2,11 +2,13 @@
 #include <codeowners/filesystem.hpp>
 #include <codeowners/git.hpp>
 
+#include <git2/attr.h>
 #include <git2/global.h> /* git_libgit2_{init,shutdown} functions */
 #include <git2/index.h>
 #include <git2/pathspec.h>
 #include <git2/repository.h>
 
+#include <iostream>
 #include <memory>
 #include <string>
 
@@ -25,14 +27,6 @@ namespace
 static libgit_handle handle;
 } /* end anonymous namespace */
 
-template <typename T>
-using deleter_type = void (*)(T*);
-
-template <typename T>
-using resource_ptr = std::unique_ptr<T, deleter_type<T>>;
-
-using repository_ptr = resource_ptr<::git_repository>;
-using index_ptr = resource_ptr<::git_index>;
 
 template <typename T>
 struct resource_traits;
@@ -76,6 +70,41 @@ resource_ptr<T> make_resource_ptr(F f, Args... args)
     assert(resource);
     return resource_ptr<T>(resource, resource_traits<T>::deleter);
 };
+
+repository_ptr create_repository(const fs::path& path)
+{
+    return make_resource_ptr<::git_repository>(::git_repository_init, path.c_str(), /*is_bare*/ false);
+}
+
+void pattern_value_set::_add_pattern(const std::string& pattern, const std::string& value)
+{
+    const std::string stored_value = attribute_name() + "=" + value;
+    // Flush so that file on disk reflects addition.
+    m_attributes_file << pattern << '\t' << stored_value << '\n'
+                      << std::flush;
+    ;
+    ::git_attr_cache_flush(repo());
+}
+
+std::optional<std::string> pattern_value_set::_get_value(const fs::path& relative_path) const
+{
+    const char* value = nullptr;
+    constexpr std::uint32_t flags = GIT_ATTR_CHECK_NO_SYSTEM;
+    assert(repo());
+    int retval = ::git_attr_get(&value, const_cast<::git_repository*>(repo()), flags, relative_path.c_str(), attribute_name().c_str());
+    if (retval)
+    {
+        using namespace std::string_literals;
+        throw co::error { "Error getting attribute value: "s + relative_path.string() };
+    }
+    if (GIT_ATTR_UNSPECIFIED(value))
+    {
+        return std::nullopt;
+    }
+    assert(value);
+    assert(GIT_ATTR_HAS_VALUE(value));
+    return std::string { value };
+}
 
 //repository_ptr make_repository_ptr(const fs::path& repo_root)
 //{
