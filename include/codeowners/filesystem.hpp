@@ -12,7 +12,7 @@ namespace co
 
 inline void ensure_exists(const fs::path& p)
 {
-    std::ofstream ofs { p.string() };
+    std::ofstream ofs { p.string(), std::ios::app };
 }
 
 struct temporary_directory_handle
@@ -31,8 +31,13 @@ struct temporary_directory_handle
         fs::remove_all(m_path, ec);
     }
 
+    operator path_type() const { return path(); }
     path_type path() const { return m_path; }
     std::string path_str() const { return m_path.string(); }
+
+    fs::path operator/(const fs::path& p) const { return m_path / p; }
+    fs::path operator/(const std::string& p) const { return m_path / p; }
+    fs::path operator/(const char* p) const { return m_path / p; }
 
 private:
     static fs::path create_temporary_directory()
@@ -43,7 +48,7 @@ private:
     }
 
 private:
-    path_type m_path;
+    const path_type m_path;
 };
 
 } /* end namespace 'co' */
