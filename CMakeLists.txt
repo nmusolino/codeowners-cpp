@@ -26,7 +26,7 @@ find_package(Boost 1.60 COMPONENTS filesystem program_options REQUIRED)
 ## codeowners library
 add_library(codeowners
         include/codeowners/codeowners.hpp
-        src/codeowners.cpp include/codeowners/filesystem.hpp include/codeowners/repository.hpp src/repository.cpp)
+        src/codeowners.cpp include/codeowners/filesystem.hpp include/codeowners/repository.hpp src/repository.cpp include/codeowners/errors.hpp src/errors.cpp)
 target_include_directories(codeowners
         PUBLIC include
         PRIVATE external/libgit2/include

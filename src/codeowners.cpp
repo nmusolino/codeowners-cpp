@@ -1,4 +1,5 @@
 #include <codeowners/codeowners.hpp>
+#include <codeowners/errors.hpp>
 #include <codeowners/filesystem.hpp>
 
 #include <git2/index.h>
