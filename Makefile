@@ -26,8 +26,7 @@ TEST_FILES = $(wildcard tests/*.hpp) $(wildcard tests/*.cpp)
 BUILD_ROOT = build_output
 
 $(BUILD_ROOT)/$(BUILD_TYPE)-%/Makefile : $(CMAKE_FILES)
-	@mkdir -p $(dir $@)
-	cmake -S . -B $(dir $@) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) $(SANITIZER_CONFIG_OPTION)
+	cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) $(SANITIZER_CONFIG_OPTION) -S . -B $(dir $@)
 	@echo "Created:  $@"
 
 $(BUILD_ROOT)/$(BUILD_TYPE)-%/tests/codeowners_tests : $(BUILD_ROOT)/$(BUILD_TYPE)-%/Makefile $(SOURCE_FILES) $(TEST_FILES)

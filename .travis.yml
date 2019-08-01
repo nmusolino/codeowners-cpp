@@ -10,11 +10,16 @@ osx_image: xcode10.1
 
 addons:
   apt:
-    update: true
+    sources:
+      - sourceline: 'ppa:mhier/libboost-latest'
+      - ubuntu-toolchain-r-test
     packages:
       - clang-format
       - make
-      - cmake
+      - g++-7
+      - libboost1.70
+      - libboost1.70-dev
+    update: true
 
 matrix:
   allow_failures:
@@ -24,5 +29,5 @@ install:
     - ./travis/install-deps.sh
 
 script:
+    - export PATH=/usr/local/bin:$PATH
     - make all
-    - echo $(which git-clang-format)
