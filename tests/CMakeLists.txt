@@ -1,6 +1,6 @@
 # TEST EXECUTABLE
 add_executable(codeowners_tests
-        codeowners.t.cpp filesystem.t.cpp git.t.cpp)
+        codeowners.t.cpp filesystem.t.cpp git.t.cpp types.t.cpp)
 
 target_compile_options(codeowners_tests PRIVATE ${STRICT_COMPILE_OPTIONS})
 target_link_libraries(codeowners_tests
