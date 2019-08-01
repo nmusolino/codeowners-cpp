@@ -88,4 +88,4 @@ bool file_pattern::match(const char* path) const
 }
 */
 
-} /* end namespace 'co' */
+}  // end namespace 'co'

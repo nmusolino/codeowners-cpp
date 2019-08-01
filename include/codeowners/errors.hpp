@@ -25,4 +25,4 @@ public:
     using error::error;
 };
 
-} /* end namespace 'co' */
+}  // end namespace 'co'

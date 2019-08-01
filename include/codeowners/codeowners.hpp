@@ -46,4 +46,4 @@ struct owner_rule
     std::vector<std::string> owners;
 };
 
-} /* end namespace 'co' */
+}  // end namespace 'co'

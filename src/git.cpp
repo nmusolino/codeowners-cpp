@@ -103,4 +103,4 @@ resource_ptr<T> make_resource_ptr(F f, Args... args)
 //    return index_ptr(index, ::git_index_free);
 //}
 
-} /* end namepsace 'co' */
+}  // end namespace 'co'

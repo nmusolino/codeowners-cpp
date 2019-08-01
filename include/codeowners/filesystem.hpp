@@ -51,4 +51,4 @@ private:
     const path_type m_path;
 };
 
-} /* end namespace 'co' */
+}  // end namespace 'co'
