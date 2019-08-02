@@ -4,6 +4,9 @@
 #include "codeowners/filesystem.hpp"
 #include "codeowners/types.hpp"
 
+#include <memory>
+#include <optional>
+
 struct git_repository; // forward
 struct git_index;      // forward
 
@@ -19,9 +22,6 @@ using resource_ptr = std::unique_ptr<T, deleter_type<T>>;
 using repository_ptr = resource_ptr<::git_repository>;
 using index_ptr = resource_ptr<::git_index>;
 
-repository_ptr
-create_repository(const fs::path& path);
-
 /// Class holding a file match pattern.  This is a strong typedef around a
 /// string.
 struct pattern
@@ -31,6 +31,15 @@ struct pattern
 {
     using strong_typedef::strong_typedef;
 };
+
+/// Discover the repository root, starting at `location` and
+/// searching parent directories.
+std::optional<fs::path>
+discover_repository(const fs::path& location, bool cross_filesystems = false);
+
+/// Create a new git repository at the specified path.
+repository_ptr
+create_repository(const fs::path& path);
 
 /**
  * The attribute_set class holds a collection of file pattern-attribute value

@@ -3,7 +3,6 @@
 
 #include <gtest/gtest.h>
 
-#include <boost/process.hpp>
 
 #include <cstdio>
 
