@@ -11,18 +11,20 @@ struct strong_typedef
 {
     using type = T;
 
-    template <typename = std::enable_if_t<std::is_default_constructible<T>::value>>
+    template <
+      typename = std::enable_if_t<std::is_default_constructible<T>::value>>
     explicit strong_typedef()
-        : m_value {}
+      : m_value{}
     {
     }
 
     explicit strong_typedef(const T& value)
-        : m_value { value }
+      : m_value{value}
     {
     }
-    explicit strong_typedef(T&& value) noexcept(std::is_nothrow_move_constructible_v<T>)
-        : m_value { std::move(value) }
+    explicit strong_typedef(T&& value) noexcept(
+      std::is_nothrow_move_constructible_v<T>)
+      : m_value{std::move(value)}
     {
     }
 
@@ -34,7 +36,8 @@ struct strong_typedef
     explicit operator T&() noexcept { return value(); }
     explicit operator const T&() const noexcept { return value(); }
 
-    friend void swap(strong_typedef& a, strong_typedef& b) noexcept(std::is_nothrow_swappable_v<T>)
+    friend void swap(strong_typedef& a,
+                     strong_typedef& b) noexcept(std::is_nothrow_swappable_v<T>)
     {
         using std::swap;
         swap(static_cast<T&>(a), static_cast<T&>(b));
@@ -58,8 +61,9 @@ struct equality_comparable : boost::equality_comparable<S>
 };
 
 template <typename S, typename T>
-struct underlying_equality_comparable : equality_comparable<S>,
-                                        boost::equality_comparable<S, T>
+struct underlying_equality_comparable
+  : equality_comparable<S>
+  , boost::equality_comparable<S, T>
 {
     friend bool operator==(const S& a, const T& b)
     {
@@ -88,8 +92,10 @@ struct istreamable
 };
 
 template <typename S>
-struct streamable : ostreamable<S>, istreamable<S>
+struct streamable
+  : ostreamable<S>
+  , istreamable<S>
 {
 };
 
-}  // end namespace 'co'
+} // end namespace 'co'
