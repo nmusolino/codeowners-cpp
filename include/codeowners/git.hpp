@@ -4,8 +4,8 @@
 #include "codeowners/filesystem.hpp"
 #include "codeowners/types.hpp"
 
-struct git_repository;  // forward
-struct git_index;  // forward
+struct git_repository; // forward
+struct git_index;      // forward
 
 namespace co
 {
@@ -19,10 +19,15 @@ using resource_ptr = std::unique_ptr<T, deleter_type<T>>;
 using repository_ptr = resource_ptr<::git_repository>;
 using index_ptr = resource_ptr<::git_index>;
 
-repository_ptr create_repository(const fs::path& path);
+repository_ptr
+create_repository(const fs::path& path);
 
-/// Class holding a file match pattern.  This is a strong typedef around a string.
-struct pattern : public strong_typedef<pattern, std::string>, equality_comparable<pattern>, streamable<pattern>
+/// Class holding a file match pattern.  This is a strong typedef around a
+/// string.
+struct pattern
+  : public strong_typedef<pattern, std::string>
+  , equality_comparable<pattern>
+  , streamable<pattern>
 {
     using strong_typedef::strong_typedef;
 };
@@ -48,8 +53,9 @@ public:
 
     attribute_set(const std::string& attribute_name);
 
-    attribute_set(const std::string& attribute_name,
-        const std::vector<std::pair<pattern, value_type>>& associations);
+    attribute_set(
+      const std::string& attribute_name,
+      const std::vector<std::pair<pattern, value_type>>& associations);
 
     /// Add a pattern-value association.
     void add_pattern(const pattern& pat, const value_type& value);
@@ -75,12 +81,16 @@ public:
 private:
     ::git_repository* repo() { return m_repository_ptr.get(); }
     const ::git_repository* repo() const { return m_repository_ptr.get(); }
+
 private:
-    const std::string m_attribute_name;  /// Attribute name used within .gitattributes file.
-    temporary_directory_handle m_temp_dir;  /// Temporary directory in which an empty git repository is created.
-    repository_ptr m_repository_ptr;  /// Pointer to repository data structure.
-    fs::path m_attributes_path;  /// Cached path to temporary .gitattributes file.
-    std::ofstream m_attributes_file;  /// Output stream
+    const std::string
+      m_attribute_name; /// Attribute name used within .gitattributes file.
+    temporary_directory_handle m_temp_dir; /// Temporary directory in which an
+                                           /// empty git repository is created.
+    repository_ptr m_repository_ptr; /// Pointer to repository data structure.
+    fs::path
+      m_attributes_path; /// Cached path to temporary .gitattributes file.
+    std::ofstream m_attributes_file; /// Output stream
 };
 
-}  // end namespace 'co'
+} // end namespace 'co'
