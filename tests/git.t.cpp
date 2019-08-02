@@ -82,14 +82,14 @@ TEST(create_repository_test, creates_repository)
     ASSERT_TRUE(repo_ptr);
 };
 
-TEST(attribute_set, construction)
+TEST(attribute_set_test, construction)
 {
     const std::string attribute_name{"my_attribute"};
     attribute_set attr_set{attribute_name};
     EXPECT_EQ(attr_set.attribute_name(), attribute_name);
 };
 
-TEST(pattern_value_set, pattern)
+TEST(attribute_set_test, pattern)
 {
     const std::string attribute_name{"my_attribute"};
     attribute_set attr_set{attribute_name};
@@ -100,7 +100,7 @@ TEST(pattern_value_set, pattern)
     EXPECT_EQ(attr_set.get("sample.cpp"), "y");
 };
 
-TEST(pattern_value_set, undefined_value)
+TEST(attribute_set_test, undefined_value)
 {
     const std::string attribute_name{"my_attribute"};
     attribute_set attr_set{attribute_name};
