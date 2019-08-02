@@ -27,7 +27,6 @@ namespace
 static libgit_handle handle;
 } /* end anonymous namespace */
 
-
 template <typename T>
 struct resource_traits;
 
@@ -76,17 +75,54 @@ repository_ptr create_repository(const fs::path& path)
     return make_resource_ptr<::git_repository>(::git_repository_init, path.c_str(), /*is_bare*/ false);
 }
 
-void pattern_value_set::_add_pattern(const std::string& pattern, const std::string& value)
+attribute_set::attribute_set(const std::string& attribute_name)
+    : m_attribute_name { attribute_name }
+    , m_repository_ptr { create_repository(m_temp_dir) }
+    , m_attributes_path { m_temp_dir / ".gitattributes" }
+    , m_attributes_file { m_attributes_path.string() }
 {
-    const std::string stored_value = attribute_name() + "=" + value;
+    assert(m_repository_ptr);
+    assert(m_attributes_file.is_open());
+}
+
+attribute_set::attribute_set(const std::string& attribute_name,
+    const std::vector<std::pair<pattern, value_type>>& associations)
+    : attribute_set { attribute_name }
+{
+    for (const auto& [pat, value] : associations)
+    {
+        add_pattern(pat, value);
+    }
+}
+
+void attribute_set::add_pattern(const pattern& pat, const value_type& value)
+{
     // Flush so that file on disk reflects addition.
-    m_attributes_file << pattern << '\t' << stored_value << '\n'
+    m_attributes_file << pat << '\t' << attribute_name() << '=' << value << '\n'
                       << std::flush;
-    ;
     ::git_attr_cache_flush(repo());
 }
 
-std::optional<std::string> pattern_value_set::_get_value(const fs::path& relative_path) const
+attribute_set::value_type attribute_set::get(const fs::path& relative_path) const
+{
+    if (auto maybe_value_str = get_optional(relative_path))
+    {
+        return *maybe_value_str;
+    }
+    using namespace std::string_literals;
+    throw attribute_set::no_attribute_error { "No attribute value for: "s + relative_path.string() };
+}
+
+attribute_set::value_type attribute_set::get(const fs::path& relative_path, const attribute_set::value_type& dflt) const
+{
+    if (auto maybe_value_str = get_optional(relative_path))
+    {
+        return *maybe_value_str;
+    }
+    return dflt;
+}
+
+std::optional<attribute_set::value_type> attribute_set::get_optional(const fs::path& relative_path) const
 {
     const char* value = nullptr;
     constexpr std::uint32_t flags = GIT_ATTR_CHECK_NO_SYSTEM;
@@ -105,31 +141,5 @@ std::optional<std::string> pattern_value_set::_get_value(const fs::path& relativ
     assert(GIT_ATTR_HAS_VALUE(value));
     return std::string { value };
 }
-
-//repository_ptr make_repository_ptr(const fs::path& repo_root)
-//{
-//    ::git_repository* repo = nullptr;
-//    int error = ::git_repository_open_ext(&repo, repo_root.c_str(), /*flags*/ 0, /*ceiling dirs*/ nullptr);
-//    if (error)
-//    {
-//        using namespace std::string_literals;
-//        throw repository_not_found_error { "Could not find git repository at "s + repo_root.string() };
-//    }
-//    assert(repo);
-//    return repository_ptr(repo, ::git_repository_free);
-//}
-//
-//index_ptr make_index_ptr(::git_repository* repo)
-//{
-//    assert(repo);
-//    ::git_index* index = nullptr;
-//    int error = ::git_repository_index(&index, repo);
-//    if (error)
-//    {
-//        throw co::error { "Error getting index: libgit2 error code: " + std::to_string(error) };
-//    }
-//    assert(index);
-//    return index_ptr(index, ::git_index_free);
-//}
 
 }  // end namespace 'co'

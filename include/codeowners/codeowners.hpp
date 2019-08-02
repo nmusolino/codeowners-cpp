@@ -1,49 +1,25 @@
 #pragma once
 
-#include "codeowners/filesystem.hpp"
+#include "codeowners/types.hpp"
 
 #include <memory>
-#include <optional>
+#include <string>
+#include <vector>
 
 namespace co
 {
 
-struct repository_impl;
-
-
-class repository
+/// Class that identifies a code owner.  This is a strong typedef around a string.
+struct owner : public strong_typedef<owner, std::string>, equality_comparable<owner>, streamable<owner>
 {
-public:
-    repository(const fs::path& repository_root);
-    ~repository();
-    static repository find(const fs::path& path);
-
-    bool contains(const fs::path& path) const;
-    std::vector<fs::path> index_paths() const;
-
-private:
-    const repository_impl* impl() const;
-    repository_impl* impl();
-
-    std::unique_ptr<repository_impl> m_impl;
+    using strong_typedef::strong_typedef;
 };
 
-std::optional<fs::path> codeowners_file(const fs::path& repo_root);
-
-struct file_pattern
+/// Class holding a code ownership rule, corresponding to a single record in CODEOWNERS file.
+struct ownership_rule
 {
-    const std::string pattern;
-    const bool invert = false;
-
-    bool match(const fs::path& path) const { return match(path.c_str()); }
-    bool match(const std::string& path) const { return match(path.c_str()); }
-    bool match(const char* path) const;
-};
-
-struct owner_rule
-{
-    file_pattern pattern;
-    std::vector<std::string> owners;
+    std::string pattern;
+    std::vector<owner> owners;
 };
 
 }  // end namespace 'co'

@@ -2,7 +2,6 @@
 #include <codeowners/errors.hpp>
 #include <codeowners/filesystem.hpp>
 
-
 #include <iostream>
 #include <memory>
 
