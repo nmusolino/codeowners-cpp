@@ -1,3 +1,7 @@
+# OS-specific files
+# Mac OS X finder attributes
+.DS_Store
+
 # CMake output
 build*
 cmake-build-*
@@ -6,4 +10,4 @@ cmake-build-*
 *~
 
 # CLion IDE metadata
-.idea  
+.idea
