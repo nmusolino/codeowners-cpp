@@ -2,10 +2,7 @@
 
 #include "codeowners/errors.hpp"
 #include "codeowners/filesystem.hpp"
-
-#include <boost/lexical_cast.hpp>
-#include <memory>
-#include <string>
+#include "codeowners/types.hpp"
 
 struct git_repository;  // forward
 struct git_index;  // forward
@@ -24,76 +21,66 @@ using index_ptr = resource_ptr<::git_index>;
 
 repository_ptr create_repository(const fs::path& path);
 
-class pattern_value_set
+/// Class holding a file match pattern.  This is a strong typedef around a string.
+struct pattern : public strong_typedef<pattern, std::string>, equality_comparable<pattern>, streamable<pattern>
+{
+    using strong_typedef::strong_typedef;
+};
+
+/**
+ * The attribute_set class holds a collection of file pattern-attribute value
+ * pairs, and provides member functions to obtain the attribute value for
+ * any relative file path.
+ *
+ * This class is implemented by creating a temporary repository and writing
+ * to a .gitattributes file, in order to take advantage of libgit2's
+ * git attributes matching logic.
+ */
+class attribute_set
 {
 public:
-    class no_attribute_value : public error
+    using value_type = std::string;
+
+    class no_attribute_error : public error
     {
         using error::error;
     };
 
-    pattern_value_set(const std::string& attribute_name)
-        : m_attribute_name { attribute_name }
-        , m_repository_ptr { create_repository(m_temp_dir) }
-        , m_attributes_file { attributes_path().string() }
-    {
-        assert(m_repository_ptr);
-        assert(m_attributes_file.is_open());
-    }
+    attribute_set(const std::string& attribute_name);
 
-    template <typename T>
-    void add_pattern(const std::string& pattern, const T& value)
-    {
-        _add_pattern(pattern, boost::lexical_cast<std::string>(value));
-    }
+    attribute_set(const std::string& attribute_name,
+        const std::vector<std::pair<pattern, value_type>>& associations);
 
-    template <typename T>
-    T get(const fs::path& relative_path) const
-    {
-        if (auto maybe_value_str = _get_value(relative_path))
-        {
-            return boost::lexical_cast<T>(*maybe_value_str);
-        }
-        using namespace std::string_literals;
-        throw no_attribute_value { "No attribute value for: "s + relative_path.string() };
-    }
+    /// Add a pattern-value association.
+    void add_pattern(const pattern& pat, const value_type& value);
 
-    template <typename T>
-    T get(const fs::path& relative_path, const T& dflt) const
-    {
-        if (auto maybe_value_str = _get_value(relative_path))
-        {
-            return boost::lexical_cast<T>(*maybe_value_str);
-        }
-        return dflt;
-    }
+    /// Get the value of the attribute for the given relative path,
+    /// based on patterns-attribute associations.  If no pattern
+    /// matches the relative path, raises `no_attribute_error`.
+    value_type get(const fs::path& relative_path) const;
 
-    template <typename T>
-    std::optional<T> get_optional(const fs::path& relative_path) const
-    {
-        if (auto maybe_value_str = _get_value(relative_path))
-        {
-            return boost::lexical_cast<T>(*maybe_value_str);
-        }
-        return std::nullopt;
-    }
+    /// Get the value of the attribute for the given relative path,
+    /// based on patterns-attribute associations.  If no pattern
+    /// matches the relative path, returns the default `dflt`.
+    value_type get(const fs::path& relative_path, const value_type& dflt) const;
 
+    /// Get the value of the attribute for the given relative path,
+    /// based on patterns-attribute associations.  If no pattern
+    /// matches the relative path, returns an empty optional value.
+    std::optional<value_type> get_optional(const fs::path& relative_path) const;
+
+    /// Return the
     const std::string& attribute_name() const& { return m_attribute_name; }
 
 private:
     ::git_repository* repo() { return m_repository_ptr.get(); }
     const ::git_repository* repo() const { return m_repository_ptr.get(); }
-
-    void _add_pattern(const std::string& pattern, const std::string& value);
-    std::optional<std::string> _get_value(const fs::path& relative_path) const;
-
-    fs::path attributes_path() const { return m_temp_dir / ".gitattributes"; }
-
 private:
-    const std::string m_attribute_name;
-    temporary_directory_handle m_temp_dir;
-    repository_ptr m_repository_ptr;
-    std::ofstream m_attributes_file;
+    const std::string m_attribute_name;  /// Attribute name used within .gitattributes file.
+    temporary_directory_handle m_temp_dir;  /// Temporary directory in which an empty git repository is created.
+    repository_ptr m_repository_ptr;  /// Pointer to repository data structure.
+    fs::path m_attributes_path;  /// Cached path to temporary .gitattributes file.
+    std::ofstream m_attributes_file;  /// Output stream
 };
 
 }  // end namespace 'co'
