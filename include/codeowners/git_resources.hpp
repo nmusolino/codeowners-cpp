@@ -41,6 +41,18 @@ discover_repository(const fs::path& location, bool cross_filesystems = false);
 repository_ptr
 create_repository(const fs::path& path);
 
+enum class discovery_strategy
+{
+    NEVER_CROSS_FILESYSTEMS,
+    CROSS_FILESYSTEMS
+};
+
+enum class repo_structure
+{
+    NONBARE,
+    BARE
+};
+
 /**
  * The attribute_set class holds a collection of file pattern-attribute value
  * pairs, and provides member functions to obtain the attribute value for

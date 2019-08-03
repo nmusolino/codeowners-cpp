@@ -28,10 +28,10 @@ add_library(codeowners
         include/codeowners/codeowners.hpp
         include/codeowners/errors.hpp
         include/codeowners/filesystem.hpp
-        include/codeowners/git.hpp
+        include/codeowners/git_resources.hpp
         src/codeowners.cpp
         src/errors.cpp
-        src/git.cpp include/codeowners/types.hpp)
+        src/git_resources.cpp include/codeowners/types.hpp)
 target_include_directories(codeowners
         PUBLIC include
         PRIVATE external/libgit2/include

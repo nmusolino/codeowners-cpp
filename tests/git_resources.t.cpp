@@ -1,5 +1,5 @@
 #include <codeowners/filesystem.hpp>
-#include <codeowners/git.hpp>
+#include <codeowners/git_resources.hpp>
 
 #include <gtest/gtest.h>
 
