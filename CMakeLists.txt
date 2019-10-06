@@ -30,12 +30,15 @@ add_library(codeowners
         include/codeowners/filesystem.hpp
         include/codeowners/repository.hpp
         include/codeowners/types.hpp
+        src/attribute_set.hpp
+        src/attribute_set.cpp
         src/codeowners.cpp
         src/errors.cpp
         src/git_resources.hpp
         src/git_resources.cpp
+        src/pattern_map.hpp
         src/repository.cpp
-        src/attribute_set.hpp src/attribute_set.cpp)
+        src/attribute_set.hpp)
 target_include_directories(codeowners
         PUBLIC include
         PRIVATE external/libgit2/include
