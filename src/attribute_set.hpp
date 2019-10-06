@@ -76,6 +76,9 @@ public:
 
     void swap(attribute_set& other) noexcept;
 
+    /// Write the contents of the attributes file to `os`.
+    std::ostream& write(std::ostream& os);
+
 private:
     void do_add_pattern(const pattern& pat, const value_type& value, bool sync);
     void do_sync();

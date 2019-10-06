@@ -31,6 +31,17 @@ TEST(attribute_set_test, attribute_name)
     EXPECT_EQ(attr_set.attribute_name(), "my_attr_name");
 };
 
+TEST(attribute_set_test, write)
+{
+    attribute_set attr_set{"my_attr",
+                           {{pattern{"*.hpp"}, "x"}, {pattern{"*.cpp"}, "y"}}};
+    std::ostringstream os;
+    attr_set.write(os);
+    EXPECT_EQ(os.str(),
+              "*.hpp    my_attr=x\n"
+              "*.cpp    my_attr=y\n");
+};
+
 TEST(attribute_set_test, swap)
 {
     attribute_set attr_set1;

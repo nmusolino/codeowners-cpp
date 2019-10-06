@@ -64,6 +64,16 @@ attribute_set::swap(attribute_set& other) noexcept
     swap(m_attributes_file, other.m_attributes_file);
 }
 
+std::ostream&
+attribute_set::write(std::ostream& os)
+{
+    std::ifstream ifs{m_attributes_path.c_str()};
+    std::copy(std::istreambuf_iterator<char>{ifs},
+              std::istreambuf_iterator<char>{},
+              std::ostreambuf_iterator{os});
+    return os;
+}
+
 void
 attribute_set::add_pattern(const pattern& pat, const value_type& value)
 {
@@ -75,7 +85,7 @@ attribute_set::do_add_pattern(const pattern& pat,
                               const value_type& value,
                               bool sync)
 {
-    m_attributes_file << pat << '\t' << attribute_name() << '=' << value
+    m_attributes_file << pat << "    " << attribute_name() << '=' << value
                       << '\n';
     if (sync)
     {
