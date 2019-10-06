@@ -83,6 +83,14 @@ TEST(create_repository_test, creates_repository)
     EXPECT_PATHS_EQUIVALENT(repo.common_directory(), temp_dir / ".git");
 };
 
+TEST(create_repository_test, creates_repository_bare)
+{
+    temporary_directory_handle temp_dir;
+    repository repo = repository::create(temp_dir, repo_structure::BARE);
+    EXPECT_TRUE(repo.is_empty());
+    EXPECT_TRUE(repo.is_bare());
+};
+
 TEST(discover_repository_test, repository)
 {
     temporary_directory_handle temp_dir;

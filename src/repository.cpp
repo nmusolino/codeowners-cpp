@@ -13,8 +13,16 @@ namespace co
 repository
 repository::create(const fs::path& path)
 {
-    return make_resource_ptr<::git_repository>(
-      ::git_repository_init, path.c_str(), /*bare*/ false);
+    return create(path, repo_structure::NONBARE);
+}
+
+repository
+repository::create(const fs::path& path, repo_structure structure)
+{
+    return make_resource_ptr<::git_repository>(::git_repository_init,
+                                               path.c_str(),
+                                               /*bare*/ structure ==
+                                                 repo_structure::BARE);
 }
 
 repository
@@ -131,7 +139,6 @@ repository::raw()
 {
     return m_ptr.get();
 }
-
 const ::git_repository*
 repository::raw() const
 {

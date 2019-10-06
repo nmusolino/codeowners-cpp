@@ -24,8 +24,11 @@ class repository
 public:
     /// Create a new, non-bare repository at the given path.
     static repository create(const fs::path& path);
+    static repository create(const fs::path& path, repo_structure structure);
+
     /// Open a repository, which must exist at the given path.
     static repository open(const fs::path& path);
+
     /// Discover the repository
     static repository discover(const fs::path& start_point);
     static repository discover(const fs::path& start_point,
