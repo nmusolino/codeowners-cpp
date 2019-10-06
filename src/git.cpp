@@ -3,11 +3,13 @@
 #include <codeowners/git.hpp>
 
 #include <git2/attr.h>
+#include <git2/errors.h>
 #include <git2/global.h> /* git_libgit2_{init,shutdown} functions */
 #include <git2/index.h>
 #include <git2/pathspec.h>
 #include <git2/repository.h>
 
+#include <array>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -71,6 +73,69 @@ make_resource_ptr(F f, Args... args)
     assert(resource);
     return resource_ptr<T>(resource, resource_traits<T>::deleter);
 };
+
+class git_buffer
+{
+public:
+    git_buffer()
+      : m_buf{empty_buf()}
+    {
+    }
+
+    ~git_buffer() { reset(); }
+
+    void reset()
+    {
+        ::git_buf_dispose(&m_buf);
+        m_buf = empty_buf();
+    }
+
+    operator ::git_buf&() { return m_buf; }
+    ::git_buf* buf_ptr() { return &m_buf; }
+
+    const char* data() const { return m_buf.ptr; }
+    std::size_t size() const { return m_buf.size; }
+    std::size_t capacity() const
+    {
+        // If we allow construction from user-owned storage (e.g. a static
+        // array), this function should take the max of m_buf.asize and
+        // m_buf.size.
+        return m_buf.asize;
+    }
+    std::string string() const { return std::string(data(), size()); }
+
+private:
+    static ::git_buf empty_buf() { return {nullptr, 0, 0}; }
+    ::git_buf m_buf;
+};
+
+std::optional<fs::path>
+discover_repository(const fs::path& location, bool across_fs)
+{
+    git_buffer buf;
+    int err = ::git_repository_discover(
+      buf.buf_ptr(), location.c_str(), across_fs, /* ceiling dirs */ nullptr);
+
+    switch (err)
+    {
+        case 0:
+        {
+            assert(buf.data());
+            return fs::canonical(fs::path{buf.data()});
+        }
+        case GIT_ENOTFOUND:
+        {
+            return std::nullopt;
+        }
+        default:
+        {
+            using namespace std::string_literals;
+            throw error{"Error discovering git repository: "s +
+                        location.c_str()};
+        }
+    }
+    assert(false && "Unreachable");
+}
 
 repository_ptr
 create_repository(const fs::path& path)
