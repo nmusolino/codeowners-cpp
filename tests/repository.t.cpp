@@ -1,5 +1,4 @@
 #include <codeowners/filesystem.hpp>
-#include <codeowners/git_resources.hpp>
 #include <codeowners/repository.hpp>
 
 #include <gtest/gtest.h>

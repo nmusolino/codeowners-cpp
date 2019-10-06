@@ -1,7 +1,8 @@
 #pragma once
 
 #include "codeowners/filesystem.hpp"
-#include "codeowners/git_resources.hpp"
+#include "codeowners/git_resources_fwd.hpp"
+#include "codeowners/types.hpp"
 
 namespace co
 {
@@ -40,11 +41,12 @@ public:
     bool is_empty() const;
 
     /// Return a pointer to the libgit2 repository object.
-    git_repository* raw();
-    const git_repository* raw() const;
+    /// TODO: remove these methods.
+    ::git_repository* raw();
+    const ::git_repository* raw() const;
 
 private:
-    repository_ptr m_ptr;
+    owning_ptr<::git_repository> m_ptr;
 };
 
 } // end namespace 'co'
