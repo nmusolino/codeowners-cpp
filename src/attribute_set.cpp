@@ -47,6 +47,24 @@ attribute_set::attribute_set(
 }
 
 void
+attribute_set::clear()
+{
+    attribute_set other{attribute_name()};
+    swap(other);
+}
+
+void
+attribute_set::swap(attribute_set& other) noexcept
+{
+    using std::swap;
+    swap(m_attribute_name, other.m_attribute_name);
+    swap(m_temp_dir, other.m_temp_dir);
+    swap(m_repository_ptr, other.m_repository_ptr);
+    swap(m_attributes_path, other.m_attributes_path);
+    swap(m_attributes_file, other.m_attributes_file);
+}
+
+void
 attribute_set::add_pattern(const pattern& pat, const value_type& value)
 {
     do_add_pattern(pat, value, /*sync*/ true);

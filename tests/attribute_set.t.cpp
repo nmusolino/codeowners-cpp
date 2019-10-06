@@ -1,4 +1,4 @@
-#include "../src/attribute_set.hpp"
+#include <src/attribute_set.hpp>
 
 #include <gtest/gtest.h>
 
@@ -29,6 +29,21 @@ TEST(attribute_set_test, attribute_name)
 {
     attribute_set attr_set{"my_attr_name"};
     EXPECT_EQ(attr_set.attribute_name(), "my_attr_name");
+};
+
+TEST(attribute_set_test, swap)
+{
+    attribute_set attr_set1;
+    attr_set1.add_pattern(pattern{"*.hpp"}, "x");
+    attribute_set attr_set2;
+    attr_set2.add_pattern(pattern{"*.hpp"}, "y");
+
+    EXPECT_EQ(attr_set1.get("sample.hpp"), "x");
+    EXPECT_EQ(attr_set2.get("sample.hpp"), "y");
+
+    attr_set1.swap(attr_set2);
+    EXPECT_EQ(attr_set1.get("sample.hpp"), "y");
+    EXPECT_EQ(attr_set2.get("sample.hpp"), "x");
 };
 
 } // end namespace 'co'

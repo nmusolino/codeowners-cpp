@@ -5,6 +5,7 @@
 #include "codeowners/repository.hpp"
 #include "codeowners/types.hpp"
 
+#include <boost/noncopyable.hpp>
 #include <fstream>
 #include <string>
 
@@ -16,6 +17,7 @@ namespace co
 struct pattern
   : public strong_typedef<pattern, std::string>
   , equality_comparable<pattern>
+  , less_than_comparable<pattern>
   , streamable<pattern>
 {
     using strong_typedef::strong_typedef;
@@ -30,7 +32,7 @@ struct pattern
  * to a .gitattributes file, in order to take advantage of libgit2's
  * git attributes matching logic.
  */
-class attribute_set
+class attribute_set : public boost::noncopyable
 {
 public:
     using value_type = std::string;
@@ -47,6 +49,9 @@ public:
     attribute_set(
       const std::string& attribute_name,
       const std::vector<std::pair<pattern, value_type>>& associations);
+
+    /// Remove all pattern-value associations.
+    void clear();
 
     /// Get the value of the attribute for the given relative path,
     /// based on patterns-attribute associations.  If no pattern
@@ -69,13 +74,14 @@ public:
     /// Add a pattern-value association.
     void add_pattern(const pattern& pat, const value_type& value);
 
+    void swap(attribute_set& other) noexcept;
+
 private:
     void do_add_pattern(const pattern& pat, const value_type& value, bool sync);
     void do_sync();
-
 private:
     static const char* const default_attribute_name;
-    const std::string m_attribute_name;
+    std::string m_attribute_name;
     temporary_directory_handle m_temp_dir;
     owning_ptr<::git_repository> m_repository_ptr;
     fs::path m_attributes_path;

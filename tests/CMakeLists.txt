@@ -8,6 +8,11 @@ add_executable(codeowners_tests
 	types.t.cpp
 )
 
+## Ensure that library-private headers can be included from test files:
+##     #include <src/header.hpp>
+target_include_directories(codeowners_tests
+		PRIVATE ..
+)
 target_compile_options(codeowners_tests PRIVATE ${STRICT_COMPILE_OPTIONS})
 target_link_libraries(codeowners_tests
 	codeowners
