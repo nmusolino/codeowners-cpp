@@ -28,7 +28,7 @@ add_library(codeowners
         include/codeowners/codeowners.hpp
         include/codeowners/errors.hpp
         include/codeowners/filesystem.hpp
-        include/codeowners/git_resources.hpp
+        src/git_resources.hpp
         include/codeowners/repository.hpp
         include/codeowners/types.hpp
         src/codeowners.cpp

@@ -39,6 +39,7 @@ equivalent(const fs::path& p1, const fs::path& p2)
     }
 }
 
+/*
 TEST(discover_repository_test, no_repository)
 {
     temporary_directory_handle temp_dir;
@@ -82,6 +83,7 @@ TEST(create_repository_test, creates_repository)
     repository_ptr repo_ptr = create_repository(temp_dir);
     ASSERT_TRUE(repo_ptr);
 };
+ */
 
 } // end namespace 'testing'
 } // end namespace 'co'
