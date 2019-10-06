@@ -19,6 +19,12 @@ private:
     std::string m_message;
 };
 
+class file_not_found_error : public error
+{
+public:
+    using error::error;
+};
+
 class repository_not_found_error : public error
 {
 public:
