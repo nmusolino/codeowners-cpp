@@ -1,6 +1,12 @@
 # TEST EXECUTABLE
 add_executable(codeowners_tests
-        codeowners.t.cpp filesystem.t.cpp git_resources.t.cpp types.t.cpp repository.t.cpp)
+	attribute_set.t.cpp
+	codeowners.t.cpp
+	filesystem.t.cpp
+	git_resources.t.cpp
+	repository.t.cpp
+	types.t.cpp
+)
 
 target_compile_options(codeowners_tests PRIVATE ${STRICT_COMPILE_OPTIONS})
 target_link_libraries(codeowners_tests

@@ -35,6 +35,7 @@ struct temporary_directory_handle
     operator path_type() const { return path(); }
     path_type path() const { return m_path; }
     std::string path_str() const { return m_path.string(); }
+    const char* c_str() const { return m_path.c_str(); }
 
     fs::path operator/(const fs::path& p) const { return m_path / p; }
     fs::path operator/(const std::string& p) const { return m_path / p; }
