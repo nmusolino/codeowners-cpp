@@ -79,6 +79,16 @@ struct underlying_equality_comparable
 };
 
 template <typename S>
+struct less_than_comparable : boost::less_than_comparable<S>
+{
+    friend bool operator<(const S& a, const S& b)
+    {
+        using T = underlying_type_t<S>;
+        return static_cast<const T&>(a) < static_cast<const T&>(b);
+    }
+};
+
+template <typename S>
 struct ostreamable
 {
     friend std::ostream& operator<<(std::ostream& os, const S& s)

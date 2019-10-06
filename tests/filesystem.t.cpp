@@ -52,11 +52,44 @@ TEST(temporary_directory_handle_test, construction_and_removal)
         temporary_directory_handle temp_dir;
         EXPECT_TRUE(fs::exists(temp_dir));
         EXPECT_TRUE(fs::is_directory(temp_dir));
-        EXPECT_TRUE(fs::exists(temp_dir.path()));
-        EXPECT_TRUE(fs::is_directory(temp_dir.path()));
         temp_dir_path = temp_dir.path();
     }
     EXPECT_FALSE(fs::exists(temp_dir_path)) << "Expected path to be removed: " << temp_dir_path;
+};
+
+TEST(temporary_directory_handle_test, move_construction)
+{
+    fs::path temp_dir_path;
+    {
+        temporary_directory_handle temp_dir;
+        ASSERT_TRUE(fs::exists(temp_dir));
+        temp_dir_path = temp_dir.path();
+
+        temporary_directory_handle replacement_temp_dir{std::move(temp_dir)};
+        EXPECT_TRUE(fs::exists(replacement_temp_dir.path()));
+        EXPECT_EQ(replacement_temp_dir.path(), temp_dir_path);
+    }
+    EXPECT_FALSE(fs::exists(temp_dir_path))
+      << "Expected path to be removed after move-construction: "
+      << temp_dir_path;
+};
+
+TEST(temporary_directory_handle_test, move_assignment)
+{
+    std::array<fs::path, 2> temp_dir_paths;
+    {
+        temporary_directory_handle temp_dir1, temp_dir2;
+        temp_dir_paths[0] = temp_dir1.path();
+        temp_dir_paths[1] = temp_dir2.path();
+
+        EXPECT_NE(temp_dir_paths[0], temp_dir_paths[1]);
+        EXPECT_TRUE(fs::exists(temp_dir_paths[0]));
+        EXPECT_TRUE(fs::exists(temp_dir_paths[1]));
+
+        temp_dir1 = std::move(temp_dir2);
+    }
+    EXPECT_FALSE(fs::exists(temp_dir_paths[0]));
+    EXPECT_FALSE(fs::exists(temp_dir_paths[1]));
 };
 
 TEST(temporary_directory_handle_test, path_str)
