@@ -16,7 +16,7 @@ ensure_exists(const fs::path& p)
     std::ofstream ofs{p.string(), std::ios::app};
 }
 
-struct temporary_directory_handle
+struct temporary_directory_handle : public boost::noncopyable
 {
     using path_type = fs::path;
 
@@ -25,11 +25,31 @@ struct temporary_directory_handle
     {
     }
 
+    temporary_directory_handle(const temporary_directory_handle&) = delete;
+    temporary_directory_handle(temporary_directory_handle&& other) noexcept
+      : m_path{}
+    {
+        swap(other);
+    }
+
+    temporary_directory_handle& operator=(
+      const temporary_directory_handle& other) = delete;
+    temporary_directory_handle& operator=(
+      temporary_directory_handle&& other) noexcept
+    {
+        swap(other);
+        return *this;
+    }
+
     ~temporary_directory_handle()
     {
-        // Ignore errors to prevent an exception propagating outside destructor.
-        boost::system::error_code ec;
-        fs::remove_all(m_path, ec);
+        if (!m_path.empty())
+        {
+            // Ignore errors to prevent an exception propagating outside
+            // destructor.
+            boost::system::error_code ec;
+            fs::remove_all(m_path, ec);
+        }
     }
 
     operator path_type() const { return path(); }
@@ -41,6 +61,11 @@ struct temporary_directory_handle
     fs::path operator/(const std::string& p) const { return m_path / p; }
     fs::path operator/(const char* p) const { return m_path / p; }
 
+    void swap(temporary_directory_handle& other) noexcept
+    {
+        m_path.swap(other.m_path);
+    }
+
 private:
     static fs::path create_temporary_directory()
     {
@@ -51,7 +76,13 @@ private:
     }
 
 private:
-    const path_type m_path;
+    path_type m_path;
 };
+
+inline void
+swap(temporary_directory_handle& a, temporary_directory_handle& b) noexcept
+{
+    a.swap(b);
+}
 
 } // end namespace 'co'
