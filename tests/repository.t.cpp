@@ -1,3 +1,4 @@
+#include <codeowners/errors.hpp>
 #include <codeowners/filesystem.hpp>
 #include <codeowners/repository.hpp>
 
@@ -10,22 +11,33 @@ namespace co
 namespace testing
 {
 
-template <typename... Args>
-void
-git(const fs::path& repository_root, Args&&... args)
+struct git_invoker
 {
-    boost::process::system(boost::process::search_path("git"),
-                           std::forward<Args>(args)...,
-                           boost::process::start_dir = repository_root.string(),
-                           boost::process::std_out > boost::process::null,
-                           boost::process::throw_on_error);
-}
+    git_invoker(fs::path repository_root)
+      : m_repository_root{std::move(repository_root)} {};
+
+    template <typename... Args>
+    void operator()(Args&&... args)
+    {
+        boost::process::system(boost::process::search_path("git"),
+                               std::forward<Args>(args)...,
+                               boost::process::start_dir =
+                                 m_repository_root.string(),
+                               boost::process::std_out > boost::process::null,
+                               boost::process::throw_on_error);
+    }
+
+private:
+    fs::path m_repository_root;
+};
 
 /// Return whether the two paths are equivalent, i.e. refer to the same
 /// filesystem entity.
 ::testing::AssertionResult
 equivalent(const fs::path& p1, const fs::path& p2)
 {
+    // NOTE: Google Test bug #1614 applies when printing two fs::path objects.
+    // https://github.com/google/googletest/issues/1614
     if (fs::equivalent(p1, p2))
     {
         return ::testing::AssertionSuccess()
@@ -38,51 +50,61 @@ equivalent(const fs::path& p1, const fs::path& p2)
     }
 }
 
-/*
+#define EXPECT_PATHS_EQUIVALENT(p1, p2)                                        \
+    EXPECT_TRUE(co::testing::equivalent((p1), (p2)))
+
 TEST(discover_repository_test, no_repository)
 {
     temporary_directory_handle temp_dir;
-    const bool across_fs = false;
 
-    std::optional<fs::path> result = discover_repository(temp_dir, across_fs);
+    // When a directory does not contain a git repository, attempting to
+    // discover a repository fails.
+    EXPECT_THROW(repository::discover(temp_dir),
+                 co::repository_not_found_error);
+    std::optional<repository> result = repository::try_discover(temp_dir);
     EXPECT_FALSE(result);
 
-    result = discover_repository(temp_dir / "nonexistent_dir", across_fs);
-    EXPECT_FALSE(result);
-};
-
-TEST(discover_repository_test, repository)
-{
-    temporary_directory_handle temp_dir;
-    const bool across_fs = false;
-
-    git(temp_dir, "init");
-    auto git_dir = temp_dir / ".git";
-    ASSERT_TRUE(fs::exists(git_dir))
-      << "Expected .git directory to exist after init operation";
-
-    // Confirm that beginning with the .git directory locates the git directory.
-    // NOTE: Google Test bug #1614 applies when printing two fs::path objects.
-    // https://github.com/google/googletest/issues/1614
-    std::optional<fs::path> result = discover_repository(git_dir, across_fs);
-    ASSERT_TRUE(result);
-    EXPECT_TRUE(co::testing::equivalent(*result, git_dir));
-
-    // Confirm that beginning in a subdirectory of the working directory
-    // locates the git directory.
-    fs::create_directory(temp_dir / "a");
-    result = discover_repository(temp_dir / "a", across_fs);
-    ASSERT_TRUE(result);
-    EXPECT_TRUE(co::testing::equivalent(*result, git_dir));
+    // When a directory does not exist, both `discover` and `try_discover`
+    // will raise an exception.
+    EXPECT_THROW(repository::discover(temp_dir / "nonexistent_dir"),
+                 co::file_not_found_error);
+    EXPECT_THROW(repository::try_discover(temp_dir / "nonexistent_dir"),
+                 co::file_not_found_error);
 };
 
 TEST(create_repository_test, creates_repository)
 {
     temporary_directory_handle temp_dir;
-    repository_ptr repo_ptr = create_repository(temp_dir);
-    ASSERT_TRUE(repo_ptr);
+    repository repo = repository::create(temp_dir);
+    EXPECT_TRUE(repo.is_empty());
+    EXPECT_FALSE(repo.is_bare());
+    EXPECT_PATHS_EQUIVALENT(repo.work_directory(), temp_dir);
+    EXPECT_PATHS_EQUIVALENT(repo.git_directory(), temp_dir / ".git");
+    EXPECT_PATHS_EQUIVALENT(repo.common_directory(), temp_dir / ".git");
 };
- */
+
+TEST(discover_repository_test, repository)
+{
+    temporary_directory_handle temp_dir;
+    auto git = git_invoker(temp_dir);
+    git("init");
+    ASSERT_TRUE(fs::exists(temp_dir / ".git"))
+      << "Expected git operation to create directory";
+
+    auto start_points = {
+      temp_dir.path(), temp_dir / ".git", temp_dir / "a", temp_dir / "a" / "b"};
+    for (const fs::path& start_point : start_points)
+    {
+        fs::create_directories(start_point); // OK if `start_point` exists.
+
+        auto repo = repository::discover(start_point);
+        EXPECT_PATHS_EQUIVALENT(repo.work_directory(), temp_dir);
+
+        auto maybe_repo = repository::try_discover(start_point);
+        ASSERT_TRUE(maybe_repo);
+        EXPECT_PATHS_EQUIVALENT(maybe_repo->work_directory(), temp_dir);
+    }
+};
 
 } // end namespace 'testing'
 } // end namespace 'co'

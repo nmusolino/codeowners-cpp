@@ -24,6 +24,8 @@ class repository
 public:
     /// Create a new, non-bare repository at the given path.
     static repository create(const fs::path& path);
+    /// Open a repository, which must exist at the given path.
+    static repository open(const fs::path& path);
     /// Discover the repository
     static repository discover(const fs::path& start_point);
     static repository discover(const fs::path& start_point,
@@ -40,8 +42,13 @@ public:
     /// Return whether the repository is empty.
     bool is_empty() const;
 
+private:
+    repository(owning_ptr<::git_repository>&& ptr)
+      : m_ptr{std::move(ptr)}
+    {
+    }
+
     /// Return a pointer to the libgit2 repository object.
-    /// TODO: remove these methods.
     ::git_repository* raw();
     const ::git_repository* raw() const;
 
