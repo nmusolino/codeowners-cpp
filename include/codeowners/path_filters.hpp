@@ -16,9 +16,11 @@ private:
 
 public:
     recursive_filter_iterator() = default;
+
     recursive_filter_iterator(fs::path filename_to_skip,
-                              fs::recursive_directory_iterator base)
-      : iterator_adaptor{base}
+                              fs::path start_point,
+                              fs::symlink_option opt = fs::symlink_option::none)
+      : iterator_adaptor{base_type{start_point, opt}}
       , m_filename_to_skip{std::move(filename_to_skip)}
     {
     }
@@ -59,6 +61,30 @@ private:
 
 private:
     fs::path m_filename_to_skip;
+};
+
+struct filtered_file_range
+{
+private:
+    fs::path m_filename_to_skip;
+    fs::path m_start_point;
+
+public:
+    filtered_file_range(fs::path filename_to_skip, fs::path start_point)
+      : m_filename_to_skip{std::move(filename_to_skip)}
+      , m_start_point{std::move(start_point)}
+    {
+    }
+
+    recursive_filter_iterator begin() const
+    {
+        return recursive_filter_iterator{m_filename_to_skip, m_start_point};
+    }
+
+    recursive_filter_iterator end() const
+    {
+        return recursive_filter_iterator{};
+    }
 };
 
 } /* end namespace 'co' */

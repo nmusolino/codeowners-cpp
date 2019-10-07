@@ -5,6 +5,7 @@ add_executable(codeowners_tests
 	filesystem.t.cpp
 	git_resources.t.cpp
 	pattern_map.t.cpp
+	path_filters.t.cpp
 	repository.t.cpp
 	types.t.cpp
 )

@@ -26,8 +26,7 @@ TEST(filter_iterator, skips_git_directory)
     }
     fs::create_directories(temp_dir / "x" / "subdir");
 
-    auto begin = recursive_filter_iterator{
-      fs::path{"x"}, fs::recursive_directory_iterator(temp_dir)};
+    auto begin = recursive_filter_iterator{"x", temp_dir};
     auto end = recursive_filter_iterator{};
 
     std::vector<fs::directory_entry> traversed(begin, end);
