@@ -39,7 +39,7 @@ add_library(codeowners
         src/git_resources.cpp
         src/pattern_map.hpp
         src/repository.cpp
-        src/attribute_set.hpp)
+        src/attribute_set.hpp include/codeowners/path_filters.hpp)
 target_include_directories(codeowners
         PUBLIC include
         PRIVATE external/libgit2/include
