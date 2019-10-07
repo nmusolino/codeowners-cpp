@@ -1,5 +1,6 @@
 #include <codeowners/codeowners.hpp>
 #include <codeowners/filesystem.hpp>
+#include <codeowners/path_filters.hpp>
 
 #include <boost/program_options.hpp>
 
@@ -91,15 +92,20 @@ list_owners_options parse(int argc, const char* argv[])
 int main(int argc, const char* argv[])
 {
     fs::path current_path = fs::current_path();
+    std::ostream& os = std::cout;
 
     list_owners_options options = parse(argc, argv);
     std::vector<fs::path>& paths = options.paths;
     if (paths.empty())
         paths.push_back(current_path);
 
-    //    co::repository repo{options.repo_dir.value_or(current_path)};
-    //    for (const auto& path : repo.index_paths()) {
-    //        std::cout << path.c_str() << '\n';
-    //    }
+    for (const auto& start_path : paths)
+    {
+        for (const auto& path : co::filtered_file_range(".git", start_path))
+        {
+            os << fs::relative(path, current_path) << '\n';
+        }
+    }
+
     return EXIT_SUCCESS;
 }
