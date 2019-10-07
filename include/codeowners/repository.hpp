@@ -4,6 +4,8 @@
 #include "codeowners/git_resources_fwd.hpp"
 #include "codeowners/types.hpp"
 
+#include <vector>
+
 namespace co
 {
 
@@ -44,6 +46,8 @@ public:
     bool is_bare() const;
     /// Return whether the repository is empty.
     bool is_empty() const;
+
+    std::vector<fs::path> submodule_paths() const;
 
 private:
     repository(owning_ptr<::git_repository>&& ptr)
