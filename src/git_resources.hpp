@@ -1,6 +1,7 @@
 #pragma once
 
 #include <codeowners/errors.hpp>
+#include <codeowners/type_utils.hpp>
 #include <codeowners/types.hpp>
 
 #include <git2/buffer.h>

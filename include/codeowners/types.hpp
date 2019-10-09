@@ -1,17 +1,11 @@
 #pragma once
 
 #include <boost/operators.hpp>
-#include <memory>
 #include <type_traits>
 
 namespace co
 {
 
-template <typename T>
-using deleter_type = void (*)(T*);
-
-template <typename T>
-using owning_ptr = std::unique_ptr<T, deleter_type<T>>;
 
 template <typename Tag, typename T>
 struct strong_typedef

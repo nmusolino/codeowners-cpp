@@ -2,7 +2,7 @@
 
 #include "codeowners/filesystem.hpp"
 #include "codeowners/git_resources_fwd.hpp"
-#include "codeowners/types.hpp"
+#include "codeowners/type_utils.hpp"
 
 #include <vector>
 
