@@ -23,5 +23,29 @@ TEST(type_utils, deleter_type)
     std::unique_ptr<T, deleter_type<T>> p_i{new T{}, deleter};
 }
 
+struct X
+{
+    friend std::ostream& operator<<(std::ostream& os, const X&)
+    {
+        return os << "X";
+    }
+};
+
+TEST(type_utils, is_streamable)
+{
+    static_assert(co::is_istreamable_v<int>);
+    // Cannot stream into a const type.  For now, callers would be responsible
+    // for using std::remove_cv_t
+    static_assert(!co::is_istreamable_v<const int>);
+    static_assert(co::is_istreamable_v<std::string>);
+
+    static_assert(co::is_ostreamable_v<int>);
+    static_assert(co::is_ostreamable_v<const int>);
+    static_assert(co::is_ostreamable_v<std::string>);
+
+    static_assert(!co::is_istreamable_v<X>);
+    static_assert(co::is_ostreamable_v<X>);
+}
+
 } // end namespace 'testing'
 } // end namespace 'co'
