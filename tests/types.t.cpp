@@ -1,4 +1,4 @@
-#include "codeowners/types.hpp"
+#include "codeowners/strong_typedef.hpp"
 
 #include <gtest/gtest.h>
 

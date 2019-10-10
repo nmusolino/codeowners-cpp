@@ -32,7 +32,7 @@ add_library(codeowners
         include/codeowners/path_filters.hpp
         include/codeowners/repository.hpp
         include/codeowners/type_utils.hpp
-        include/codeowners/types.hpp
+        include/codeowners/strong_typedef.hpp
         src/attribute_set.hpp
         src/attribute_set.cpp
         src/codeowners.cpp

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "codeowners/types.hpp"
+#include "codeowners/strong_typedef.hpp"
 
 #include <memory>
 #include <string>

@@ -3,7 +3,7 @@
 #include "codeowners/errors.hpp"
 #include "codeowners/filesystem.hpp"
 #include "codeowners/repository.hpp"
-#include "codeowners/types.hpp"
+#include "codeowners/strong_typedef.hpp"
 
 #include <boost/noncopyable.hpp>
 #include <fstream>
