@@ -132,7 +132,7 @@ TEST(repository_submodule_paths, submodule_paths)
 
     repository repo = repository::open(temp_dir);
     auto submodule_paths = repo.submodule_paths();
-    EXPECT_EQ(submodule_paths.size(), 1);
+    ASSERT_EQ(submodule_paths.size(), 1);
     EXPECT_EQ(submodule_paths.front(), "external/sanitizers-cmake");
 };
 

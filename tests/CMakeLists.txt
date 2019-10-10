@@ -8,7 +8,7 @@ add_executable(codeowners_tests
 	path_filters.t.cpp
 	repository.t.cpp
 	types.t.cpp
-        type_utils.t.cpp strong_typedef.t.cpp)
+        type_utils.t.cpp strong_typedef.t.cpp parser.t.cpp)
 
 ## Ensure that library-private headers can be included from test files:
 ##     #include <src/header.hpp>
