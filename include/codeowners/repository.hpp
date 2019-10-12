@@ -63,4 +63,7 @@ private:
     owning_ptr<::git_repository> m_ptr;
 };
 
+std::optional<fs::path>
+codeowners_path(const fs::path& work_directory);
+
 } // end namespace 'co'
