@@ -4,8 +4,6 @@
 
 namespace co
 {
-namespace testing
-{
 
 TEST(parser, line_range)
 {
@@ -47,17 +45,14 @@ TEST(parser, parse)
     std::istringstream is{content};
     auto ann_rules = parse(is, ".github/codeowners");
 
-    annotated_rule expected_rule1 = {
-      rule_source{".github/codeowners", 2},
-      ownership_rule{pattern{"docs/*"}, {owner{"docs@example.com"}}}};
+    annotated_rule expected_rule1
+        = {rule_source{".github/codeowners", 2},
+           ownership_rule{pattern{"docs/*"}, {owner{"docs@example.com"}}}};
 
-    annotated_rule expected_rule2 = {
-      rule_source{".github/codeowners", 5},
-      ownership_rule{pattern{"apps/"}, {owner{"@octocat"}}}};
+    annotated_rule expected_rule2 = {rule_source{".github/codeowners", 5},
+                                     ownership_rule{pattern{"apps/"}, {owner{"@octocat"}}}};
 
-    EXPECT_EQ(ann_rules,
-              (std::vector<annotated_rule>{{expected_rule1, expected_rule2}}));
+    EXPECT_EQ(ann_rules, (std::vector<annotated_rule>{{expected_rule1, expected_rule2}}));
 }
 
-} /* end namespace 'testing' */
 } /* end namespace 'co' */

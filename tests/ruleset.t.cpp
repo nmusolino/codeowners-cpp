@@ -4,14 +4,11 @@
 
 namespace co
 {
-namespace testing
-{
 
 TEST(parser, ruleset)
 {
     rule_source src{"", 0};
-    std::vector<annotated_rule> arules{
-      {src, {pattern{"*.hpp"}, {owner{"octocat"}}}}};
+    std::vector<annotated_rule> arules{{src, {pattern{"*.hpp"}, {owner{"octocat"}}}}};
 
     ruleset rset{arules};
 
@@ -23,5 +20,4 @@ TEST(parser, ruleset)
     EXPECT_EQ(*result, arules.front());
 };
 
-} /* end namespace 'testing' */
 } /* end namespace 'co' */

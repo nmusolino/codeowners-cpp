@@ -33,8 +33,7 @@ public:
 
     /// Discover the repository
     static repository discover(const fs::path& start_point);
-    static repository discover(const fs::path& start_point,
-                               discovery_strategy strategy);
+    static repository discover(const fs::path& start_point, discovery_strategy strategy);
     static std::optional<repository> try_discover(const fs::path& start_point);
     static std::optional<repository> try_discover(const fs::path& start_point,
                                                   discovery_strategy strategy);
@@ -51,7 +50,7 @@ public:
 
 private:
     repository(owning_ptr<::git_repository>&& ptr)
-      : m_ptr{std::move(ptr)}
+        : m_ptr{std::move(ptr)}
     {
     }
 
@@ -63,7 +62,6 @@ private:
     owning_ptr<::git_repository> m_ptr;
 };
 
-std::optional<fs::path>
-codeowners_path(const fs::path& work_directory);
+std::optional<fs::path> codeowners_path(const fs::path& work_directory);
 
 } // end namespace 'co'

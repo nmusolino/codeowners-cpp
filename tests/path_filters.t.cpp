@@ -5,8 +5,6 @@
 
 namespace co
 {
-namespace testing
-{
 
 TEST(filter_iterator, skips_git_directory)
 {
@@ -35,5 +33,4 @@ TEST(filter_iterator, skips_git_directory)
     EXPECT_EQ(traversed[1].path().filename(), "b");
 };
 
-} /* end namespace 'testing' */
 } /* end namespace 'co' */

@@ -21,8 +21,7 @@ TEST(attribute_set_test, undefined_value)
     attr_set.add_pattern(pattern{"*.hpp"}, "foo");
 
     EXPECT_FALSE(bool(attr_set.get_optional("unmatched_file")));
-    EXPECT_THROW(attr_set.get("unmatched_file"),
-                 attribute_set::no_attribute_error);
+    EXPECT_THROW(attr_set.get("unmatched_file"), attribute_set::no_attribute_error);
 };
 
 TEST(attribute_set_test, attribute_name)

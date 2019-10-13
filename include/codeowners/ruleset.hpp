@@ -7,8 +7,7 @@
 namespace co
 {
 
-template <typename T>
-class pattern_map;
+template <typename T> class pattern_map;
 
 class ruleset
 {
@@ -19,7 +18,7 @@ public:
 
     template <typename InputIt>
     ruleset(InputIt begin, InputIt end)
-      : ruleset(std::vector<annotated_rule>(begin, end))
+        : ruleset(std::vector<annotated_rule>(begin, end))
     {
     }
 

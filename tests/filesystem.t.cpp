@@ -4,8 +4,6 @@
 
 namespace co
 {
-namespace testing
-{
 
 TEST(ensure_exists_test, creates_file)
 {
@@ -22,13 +20,13 @@ TEST(ensure_exists_test, leaves_existing_file)
 
     fs::path path = temp_dir / "file";
     {
-        std::ofstream ofs { path.string() };
+        std::ofstream ofs{path.string()};
         ofs << "original_content";
     }
     ASSERT_TRUE(fs::exists(path));
 
     ensure_exists(path);
-    std::ifstream ifs { path.string() };
+    std::ifstream ifs{path.string()};
     std::string contents;
     ifs >> contents;
     EXPECT_EQ(contents, "original_content");
@@ -70,8 +68,7 @@ TEST(temporary_directory_handle_test, move_construction)
         EXPECT_EQ(replacement_temp_dir.path(), temp_dir_path);
     }
     EXPECT_FALSE(fs::exists(temp_dir_path))
-      << "Expected path to be removed after move-construction: "
-      << temp_dir_path;
+        << "Expected path to be removed after move-construction: " << temp_dir_path;
 };
 
 TEST(temporary_directory_handle_test, move_assignment)
@@ -98,5 +95,4 @@ TEST(temporary_directory_handle_test, path_str)
     EXPECT_EQ(temp_dir.path_str(), temp_dir.path().string());
 };
 
-} /* end namespace 'testing' */
 } /* end namespace 'co' */

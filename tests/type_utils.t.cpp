@@ -6,8 +6,6 @@
 
 namespace co
 {
-namespace testing
-{
 
 TEST(type_utils, deleter_type)
 {
@@ -25,10 +23,7 @@ TEST(type_utils, deleter_type)
 
 struct X
 {
-    friend std::ostream& operator<<(std::ostream& os, const X&)
-    {
-        return os << "X";
-    }
+    friend std::ostream& operator<<(std::ostream& os, const X&) { return os << "X"; }
 };
 
 TEST(type_utils, is_streamable)
@@ -47,5 +42,4 @@ TEST(type_utils, is_streamable)
     static_assert(co::is_ostreamable_v<X>);
 }
 
-} // end namespace 'testing'
 } // end namespace 'co'

@@ -8,21 +8,16 @@
 
 namespace co
 {
-namespace testing
-{
 
 struct git_invoker
 {
     git_invoker(fs::path repository_root)
-      : m_repository_root{std::move(repository_root)} {};
+        : m_repository_root{std::move(repository_root)} {};
 
-    template <typename... Args>
-    void operator()(Args&&... args)
+    template <typename... Args> void operator()(Args&&... args)
     {
-        boost::process::system(boost::process::search_path("git"),
-                               std::forward<Args>(args)...,
-                               boost::process::start_dir =
-                                 m_repository_root.string(),
+        boost::process::system(boost::process::search_path("git"), std::forward<Args>(args)...,
+                               boost::process::start_dir = m_repository_root.string(),
                                boost::process::std_out > boost::process::null,
                                boost::process::std_err > boost::process::null,
                                boost::process::throw_on_error);
@@ -34,25 +29,21 @@ private:
 
 /// Return whether the two paths are equivalent, i.e. refer to the same
 /// filesystem entity.
-::testing::AssertionResult
-equivalent(const fs::path& p1, const fs::path& p2)
+::testing::AssertionResult equivalent(const fs::path& p1, const fs::path& p2)
 {
     // NOTE: Google Test bug #1614 applies when printing two fs::path objects.
     // https://github.com/google/googletest/issues/1614
     if (fs::equivalent(p1, p2))
     {
-        return ::testing::AssertionSuccess()
-               << "Path " << p1 << " is equivalent to " << p2;
+        return ::testing::AssertionSuccess() << "Path " << p1 << " is equivalent to " << p2;
     }
     else
     {
-        return ::testing::AssertionFailure()
-               << "Path " << p1 << " is not equivalent to " << p2;
+        return ::testing::AssertionFailure() << "Path " << p1 << " is not equivalent to " << p2;
     }
 }
 
-#define EXPECT_PATHS_EQUIVALENT(p1, p2)                                        \
-    EXPECT_TRUE(co::testing::equivalent((p1), (p2)))
+#define EXPECT_PATHS_EQUIVALENT(p1, p2) EXPECT_TRUE(co::equivalent((p1), (p2)))
 
 TEST(discover_repository_test, no_repository)
 {
@@ -60,17 +51,14 @@ TEST(discover_repository_test, no_repository)
 
     // When a directory does not contain a git repository, attempting to
     // discover a repository fails.
-    EXPECT_THROW(repository::discover(temp_dir),
-                 co::repository_not_found_error);
+    EXPECT_THROW(repository::discover(temp_dir), co::repository_not_found_error);
     std::optional<repository> result = repository::try_discover(temp_dir);
     EXPECT_FALSE(result);
 
     // When a directory does not exist, both `discover` and `try_discover`
     // will raise an exception.
-    EXPECT_THROW(repository::discover(temp_dir / "nonexistent_dir"),
-                 co::file_not_found_error);
-    EXPECT_THROW(repository::try_discover(temp_dir / "nonexistent_dir"),
-                 co::file_not_found_error);
+    EXPECT_THROW(repository::discover(temp_dir / "nonexistent_dir"), co::file_not_found_error);
+    EXPECT_THROW(repository::try_discover(temp_dir / "nonexistent_dir"), co::file_not_found_error);
 };
 
 TEST(create_repository_test, creates_repository)
@@ -97,11 +85,9 @@ TEST(discover_repository_test, repository)
     temporary_directory_handle temp_dir;
     auto git = git_invoker(temp_dir);
     git("init");
-    ASSERT_TRUE(fs::exists(temp_dir / ".git"))
-      << "Expected git operation to create directory";
+    ASSERT_TRUE(fs::exists(temp_dir / ".git")) << "Expected git operation to create directory";
 
-    auto start_points = {
-      temp_dir.path(), temp_dir / ".git", temp_dir / "a", temp_dir / "a" / "b"};
+    auto start_points = {temp_dir.path(), temp_dir / ".git", temp_dir / "a", temp_dir / "a" / "b"};
     for (const fs::path& start_point : start_points)
     {
         fs::create_directories(start_point); // OK if `start_point` exists.
@@ -122,11 +108,7 @@ TEST(repository_submodule_paths, submodule_paths)
 
     auto git = git_invoker(temp_dir);
     git("init");
-    git("submodule",
-        "add",
-        "--depth",
-        "1",
-        "git://github.com/arsenm/sanitizers-cmake.git",
+    git("submodule", "add", "--depth", "1", "git://github.com/arsenm/sanitizers-cmake.git",
         "external/sanitizers-cmake");
     git("commit", "-m", "Add submodule");
 
@@ -157,5 +139,4 @@ TEST(repository_submodule_paths, codeowners_path)
     }
 };
 
-} // end namespace 'testing'
 } // end namespace 'co'
