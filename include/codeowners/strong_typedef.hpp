@@ -1,28 +1,24 @@
 #pragma once
 
+#include <codeowners/type_utils.hpp>
+
 #include <boost/operators.hpp>
-#include <memory>
 #include <type_traits>
 
 namespace co
 {
 
-template <typename T>
-using deleter_type = void (*)(T*);
-
-template <typename T>
-using owning_ptr = std::unique_ptr<T, deleter_type<T>>;
-
 template <typename Tag, typename T>
 struct strong_typedef
 {
-    using type = T;
+    using value_type = T;
+    using param_type =
+      std::conditional_t<std::is_fundamental_v<T>, T, const T&>;
 
-    template <
-      typename = std::enable_if_t<std::is_default_constructible<T>::value>>
-    explicit strong_typedef()
+    strong_typedef()
       : m_value{}
     {
+        static_assert(std::is_default_constructible_v<T>);
     }
 
     explicit strong_typedef(const T& value)
@@ -36,9 +32,9 @@ struct strong_typedef
     }
 
     const T& value() const& noexcept { return m_value; }
-    const T& value() const&& noexcept = delete;
+    const T&& value() const&& noexcept = delete;
     T& value() & noexcept { return m_value; }
-    T& value() && noexcept = delete;
+    T&& value() && noexcept { return std::move(m_value); }
 
     explicit operator T&() noexcept { return value(); }
     explicit operator const T&() const noexcept { return value(); }
@@ -55,27 +51,23 @@ private:
 };
 
 template <typename StrongTypedef>
-using underlying_type_t = typename StrongTypedef::type;
+using underlying_type_t = typename StrongTypedef::value_type;
 
 template <typename S>
 struct equality_comparable : boost::equality_comparable<S>
 {
     friend bool operator==(const S& a, const S& b)
     {
-        using T = underlying_type_t<S>;
-        return static_cast<const T&>(a) == static_cast<const T&>(b);
+        return a.value() == b.value();
     }
 };
 
-template <typename S, typename T>
+template <typename S, typename U>
 struct underlying_equality_comparable
   : equality_comparable<S>
-  , boost::equality_comparable<S, T>
+  , boost::equality_comparable<S, U>
 {
-    friend bool operator==(const S& a, const T& b)
-    {
-        return static_cast<const T&>(a) == b;
-    }
+    friend bool operator==(const S& s, const U& u) { return s.value() == u; }
 };
 
 template <typename S>
@@ -83,8 +75,7 @@ struct less_than_comparable : boost::less_than_comparable<S>
 {
     friend bool operator<(const S& a, const S& b)
     {
-        using T = underlying_type_t<S>;
-        return static_cast<const T&>(a) < static_cast<const T&>(b);
+        return a.value() < b.value();
     }
 };
 

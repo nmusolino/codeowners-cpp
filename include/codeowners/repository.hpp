@@ -2,7 +2,9 @@
 
 #include "codeowners/filesystem.hpp"
 #include "codeowners/git_resources_fwd.hpp"
-#include "codeowners/types.hpp"
+#include "codeowners/type_utils.hpp"
+
+#include <vector>
 
 namespace co
 {
@@ -45,6 +47,8 @@ public:
     /// Return whether the repository is empty.
     bool is_empty() const;
 
+    std::vector<fs::path> submodule_paths() const;
+
 private:
     repository(owning_ptr<::git_repository>&& ptr)
       : m_ptr{std::move(ptr)}
@@ -58,5 +62,8 @@ private:
 private:
     owning_ptr<::git_repository> m_ptr;
 };
+
+std::optional<fs::path>
+codeowners_path(const fs::path& work_directory);
 
 } // end namespace 'co'

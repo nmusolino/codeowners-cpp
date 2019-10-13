@@ -5,9 +5,15 @@
 
 #include <git2/errors.h> // libgit2 error codes
 #include <git2/repository.h>
+#include <git2/submodule.h>
 
 namespace co
 {
+
+static constexpr std::array<const char*, 3> codeowner_relative_paths{
+  "CODEOWNERS",
+  "docs/CODEOWNERS",
+  ".github/CODEOWNERS"};
 
 /* static member functions */
 repository
@@ -134,15 +140,45 @@ repository::is_empty() const
     return ::git_repository_is_empty(const_cast<::git_repository*>(raw()));
 }
 
+std::vector<fs::path>
+repository::submodule_paths() const
+{
+    std::vector<fs::path> paths;
+
+    const auto callback =
+      [](git_submodule* sm, const char* /*name*/, void* payload) -> int {
+        auto& paths = *reinterpret_cast<std::vector<fs::path>*>(payload);
+        paths.emplace_back(::git_submodule_path(sm));
+        return 0;
+    };
+    ::git_submodule_foreach(
+      const_cast<::git_repository*>(raw()), callback, &paths);
+    return paths;
+}
+
 ::git_repository*
 repository::raw()
 {
     return m_ptr.get();
 }
+
 const ::git_repository*
 repository::raw() const
 {
     return m_ptr.get();
+}
+
+std::optional<fs::path>
+codeowners_path(const fs::path& work_directory)
+{
+    for (const auto& rel_path : codeowner_relative_paths)
+    {
+        if (fs::path p = work_directory / rel_path; fs::exists(p))
+        {
+            return p;
+        }
+    }
+    return std::nullopt;
 }
 
 } // end namespace 'co'

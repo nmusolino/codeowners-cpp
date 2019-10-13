@@ -12,11 +12,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(STRICT_COMPILE_OPTIONS -Werror -Wall -Wextra)
 
-
 ## External dependencies
-set(BUILD_CLAR OFF CACHE BOOL "")  # Disable test suite in libgit2
 add_subdirectory(external/googletest)
+set(BUILD_CLAR OFF CACHE BOOL "")  # Disable test suite in libgit2
 add_subdirectory(external/libgit2)
+add_subdirectory(external/range-v3)
+
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/external/sanitizers-cmake/cmake" ${CMAKE_MODULE_PATH})
 find_package(Sanitizers)
 
@@ -28,23 +29,29 @@ add_library(codeowners
         include/codeowners/codeowners.hpp
         include/codeowners/errors.hpp
         include/codeowners/filesystem.hpp
+        include/codeowners/parser.hpp
+        include/codeowners/path_filters.hpp
         include/codeowners/repository.hpp
-        include/codeowners/types.hpp
+        include/codeowners/ruleset.hpp
+        include/codeowners/type_utils.hpp
+        include/codeowners/strong_typedef.hpp
         src/attribute_set.hpp
         src/attribute_set.cpp
         src/codeowners.cpp
         src/errors.cpp
         src/git_resources.hpp
         src/git_resources.cpp
+        src/parser.cpp
         src/pattern_map.hpp
         src/repository.cpp
-        src/attribute_set.hpp)
+        src/ruleset.cpp
+        )
 target_include_directories(codeowners
         PUBLIC include
         PRIVATE external/libgit2/include
         )
 target_link_libraries(codeowners
-        PUBLIC Boost_filesystem
+        PUBLIC Boost_filesystem range-v3
         PRIVATE git2
         )
 target_compile_options(codeowners PRIVATE ${STRICT_COMPILE_OPTIONS})

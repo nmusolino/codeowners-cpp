@@ -24,6 +24,7 @@ struct git_invoker
                                boost::process::start_dir =
                                  m_repository_root.string(),
                                boost::process::std_out > boost::process::null,
+                               boost::process::std_err > boost::process::null,
                                boost::process::throw_on_error);
     }
 
@@ -111,6 +112,48 @@ TEST(discover_repository_test, repository)
         auto maybe_repo = repository::try_discover(start_point);
         ASSERT_TRUE(maybe_repo);
         EXPECT_PATHS_EQUIVALENT(maybe_repo->work_directory(), temp_dir);
+    }
+};
+
+TEST(repository_submodule_paths, submodule_paths)
+{
+    temporary_directory_handle temp_dir;
+    create_directories(temp_dir / "external");
+
+    auto git = git_invoker(temp_dir);
+    git("init");
+    git("submodule",
+        "add",
+        "--depth",
+        "1",
+        "git://github.com/arsenm/sanitizers-cmake.git",
+        "external/sanitizers-cmake");
+    git("commit", "-m", "Add submodule");
+
+    repository repo = repository::open(temp_dir);
+    auto submodule_paths = repo.submodule_paths();
+    ASSERT_EQ(submodule_paths.size(), 1);
+    EXPECT_EQ(submodule_paths.front(), "external/sanitizers-cmake");
+};
+
+TEST(repository_submodule_paths, codeowners_path)
+{
+    temporary_directory_handle temp_dir;
+    create_directories(temp_dir / "docs");
+    create_directories(temp_dir / ".github");
+
+    EXPECT_FALSE(codeowners_path(temp_dir));
+
+    const auto CODEOWNERS = "CODEOWNERS";
+
+    for (const auto& dir : {".github", "docs", "."})
+    {
+        fs::path p;
+        ensure_exists(p = temp_dir / dir / CODEOWNERS);
+
+        auto opt_result = codeowners_path(temp_dir);
+        ASSERT_TRUE(opt_result);
+        EXPECT_PATHS_EQUIVALENT(*opt_result, p);
     }
 };
 

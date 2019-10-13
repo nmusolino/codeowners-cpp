@@ -1,9 +1,10 @@
 #pragma once
 
+#include "codeowners/codeowners.hpp"
 #include "codeowners/errors.hpp"
 #include "codeowners/filesystem.hpp"
 #include "codeowners/repository.hpp"
-#include "codeowners/types.hpp"
+#include "codeowners/strong_typedef.hpp"
 
 #include <boost/noncopyable.hpp>
 #include <fstream>
@@ -11,17 +12,6 @@
 
 namespace co
 {
-
-/// Class holding a file match pattern.  This is a strong typedef around a
-/// string.
-struct pattern
-  : public strong_typedef<pattern, std::string>
-  , equality_comparable<pattern>
-  , less_than_comparable<pattern>
-  , streamable<pattern>
-{
-    using strong_typedef::strong_typedef;
-};
 
 /**
  * The attribute_set class holds a collection of file pattern-attribute value
