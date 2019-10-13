@@ -30,7 +30,7 @@ add_library(codeowners
         include/codeowners/errors.hpp
         include/codeowners/filesystem.hpp
         include/codeowners/parser.hpp
-        include/codeowners/path_filters.hpp
+        include/codeowners/path_sources.hpp
         include/codeowners/repository.hpp
         include/codeowners/ruleset.hpp
         include/codeowners/type_utils.hpp

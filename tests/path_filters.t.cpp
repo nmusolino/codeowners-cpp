@@ -1,5 +1,5 @@
 #include "codeowners/filesystem.hpp"
-#include "codeowners/path_filters.hpp"
+#include "codeowners/path_sources.hpp"
 
 #include <gtest/gtest.h>
 

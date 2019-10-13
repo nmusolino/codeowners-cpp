@@ -1,7 +1,7 @@
 #include <codeowners/codeowners.hpp>
 #include <codeowners/filesystem.hpp>
 #include <codeowners/parser.hpp>
-#include <codeowners/path_filters.hpp>
+#include <codeowners/path_sources.hpp>
 #include <codeowners/ruleset.hpp>
 
 #include <boost/program_options.hpp>
