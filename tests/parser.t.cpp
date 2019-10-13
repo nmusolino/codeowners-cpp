@@ -4,8 +4,6 @@
 
 namespace co
 {
-namespace testing
-{
 
 TEST(parser, line_range)
 {
@@ -59,5 +57,4 @@ TEST(parser, parse)
               (std::vector<annotated_rule>{{expected_rule1, expected_rule2}}));
 }
 
-} /* end namespace 'testing' */
 } /* end namespace 'co' */

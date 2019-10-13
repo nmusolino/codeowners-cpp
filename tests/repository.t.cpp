@@ -8,8 +8,6 @@
 
 namespace co
 {
-namespace testing
-{
 
 struct git_invoker
 {
@@ -157,5 +155,4 @@ TEST(repository_submodule_paths, codeowners_path)
     }
 };
 
-} // end namespace 'testing'
 } // end namespace 'co'

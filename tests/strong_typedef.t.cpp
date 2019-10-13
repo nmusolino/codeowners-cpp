@@ -7,8 +7,6 @@
 
 namespace co
 {
-namespace testing
-{
 
 struct TaggedInt
   : public strong_typedef<TaggedInt, int>
@@ -56,5 +54,4 @@ TEST(strong_typedef, copy_constructor)
     EXPECT_EQ(s1, s2);
 }
 
-} // end namespace 'testing'
 } // end namespace 'co'

@@ -4,8 +4,6 @@
 
 namespace co
 {
-namespace testing
-{
 
 TEST(parser, ruleset)
 {
@@ -23,5 +21,4 @@ TEST(parser, ruleset)
     EXPECT_EQ(*result, arules.front());
 };
 
-} /* end namespace 'testing' */
 } /* end namespace 'co' */

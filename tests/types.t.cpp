@@ -4,8 +4,6 @@
 
 namespace co
 {
-namespace testing
-{
 
 struct X : public strong_typedef<X, int>, equality_comparable<X>, streamable<X>
 {
@@ -61,5 +59,4 @@ TEST(strong_typedef_test, streamable_with_errors)
     EXPECT_TRUE(ss.fail());
 };
 
-}  // end namespace 'testing'
 }  // end namespace 'co'
