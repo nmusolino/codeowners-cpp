@@ -2,9 +2,12 @@
 #include <codeowners/filesystem.hpp>
 #include <codeowners/parser.hpp>
 #include <codeowners/path_sources.hpp>
+#include <codeowners/repository.hpp>
 #include <codeowners/ruleset.hpp>
 
 #include <boost/program_options.hpp>
+#include <range/v3/view/concat.hpp>
+#include <range/v3/view/single.hpp>
 
 #include <codeowners/parser.hpp>
 #include <cstdlib>
@@ -132,7 +135,8 @@ int main(int argc, const char* argv[])
 
     for (const auto& start_path : paths)
     {
-        for (const auto& path : co::filtered_file_range(".git", start_path))
+        for (const auto& path :
+             co::make_filtered_file_range(start_path, ranges::views::single(repo.git_directory())))
         {
             const fs::path rel_path = fs::relative(path, work_dir);
             os << fs::relative(path, current_path).c_str() << ":    ";

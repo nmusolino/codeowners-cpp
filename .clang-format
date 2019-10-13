@@ -1,6 +1,7 @@
 BasedOnStyle: WebKit
 BreakBeforeBraces: Allman
 AlignAfterOpenBracket: Align
+AlwaysBreakTemplateDeclarations: true
 Cpp11BracedListStyle: true
 SpaceBeforeCpp11BracedList: false
 ColumnLimit: 100
