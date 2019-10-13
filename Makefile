@@ -18,8 +18,9 @@ j ?= 2
 BUILD_TYPE ?= Debug
 
 # SOURCE FILE ENUMERATION
-CMAKE_FILES = CMakeLists.txt tests/CMakeLists.txt
-SOURCE_FILES = $(wildcard include/codeowners/*) $(wildcard src/*)
+CMAKE_FILES = CMakeLists.txt tests/CMakeLists.txt apps/CMakeLists.txt
+# This is a bit more broad than it needs to be for each target.
+SOURCE_FILES = $(wildcard include/codeowners/*) $(wildcard src/*) $(wildcard apps/*)
 TEST_FILES = $(wildcard tests/*.hpp) $(wildcard tests/*.cpp) 
 
 # BUILD OUTPUT LOCATIONS

@@ -52,7 +52,7 @@ ruleset::ruleset(std::vector<annotated_rule>&& rules)
 ruleset::~ruleset() = default;
 
 std::optional<annotated_rule>
-ruleset::apply(const fs::path& path)
+ruleset::apply(const fs::path& path) const
 {
     const annotated_rule* arule = m_rule_map->get(path);
 

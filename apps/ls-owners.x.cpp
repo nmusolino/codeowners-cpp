@@ -1,6 +1,8 @@
 #include <codeowners/codeowners.hpp>
 #include <codeowners/filesystem.hpp>
+#include <codeowners/parser.hpp>
 #include <codeowners/path_filters.hpp>
+#include <codeowners/ruleset.hpp>
 
 #include <boost/program_options.hpp>
 
@@ -115,7 +117,8 @@ int main(int argc, const char* argv[])
     assert(maybe_repo);
 
     const co::repository& repo = *maybe_repo;
-    auto maybe_co_path = co::codeowners_path(repo.work_directory());
+    const fs::path work_dir = repo.work_directory();
+    auto maybe_co_path = co::codeowners_path(work_dir);
     if (!maybe_co_path)
     {
         os << "No CODEOWNERS file found; repo work directory: "
@@ -123,6 +126,8 @@ int main(int argc, const char* argv[])
         return EXIT_SUCCESS;
     }
     assert(maybe_co_path);
+
+    const co::ruleset ruleset{co::parse(*maybe_co_path)};
 
     // TODO: parse rules and perform matching of paths.
 
@@ -134,7 +139,19 @@ int main(int argc, const char* argv[])
     {
         for (const auto& path : co::filtered_file_range(".git", start_path))
         {
-            os << fs::relative(path, current_path).c_str() << '\n';
+            const fs::path rel_path = fs::relative(path, work_dir);
+            os << fs::relative(path, current_path).c_str() << ":    ";
+
+            const auto matched_rule = ruleset.apply(rel_path);
+            if (matched_rule)
+            {
+                os << matched_rule->rule.owners.front();
+            }
+            else
+            {
+                os << "[NO_OWNER]";
+            }
+            os << '\n';
         }
     }
 
