@@ -64,4 +64,10 @@ private:
 
 std::optional<fs::path> codeowners_path(const fs::path& work_directory);
 
+/**
+ * Return the git directory and any submodule paths.  This set of directories
+ * should generally be skipped when iterating over files.
+ */
+std::vector<fs::path> nonwork_directories(const repository&);
+
 } // end namespace 'co'

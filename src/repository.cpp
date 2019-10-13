@@ -7,6 +7,12 @@
 #include <git2/repository.h>
 #include <git2/submodule.h>
 
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/concat.hpp>
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/single.hpp>
+#include <range/v3/view/transform.hpp>
+
 namespace co
 {
 
@@ -144,6 +150,17 @@ std::optional<fs::path> codeowners_path(const fs::path& work_directory)
         }
     }
     return std::nullopt;
+}
+
+std::vector<fs::path> nonwork_directories(const repository& repo)
+{
+    fs::path work_dir = repo.work_directory();
+    auto subm_paths = repo.submodule_paths();
+    auto full_subm_paths = subm_paths
+        | ranges::views::transform([&work_dir](const auto& p) { return work_dir / p; })
+        | ranges::views::filter([](const auto& p) { return fs::exists(p); });
+    auto git_dir = ranges::views::single(repo.git_directory());
+    return ranges::views::concat(git_dir, full_subm_paths) | ranges::to<std::vector<fs::path>>();
 }
 
 } // end namespace 'co'

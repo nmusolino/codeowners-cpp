@@ -116,6 +116,12 @@ TEST(repository_submodule_paths, submodule_paths)
     auto submodule_paths = repo.submodule_paths();
     ASSERT_EQ(submodule_paths.size(), 1);
     EXPECT_EQ(submodule_paths.front(), "external/sanitizers-cmake");
+
+    // Test nonwork_directories function.
+    auto nonwork_paths = nonwork_directories(repo);
+    EXPECT_EQ(nonwork_paths.size(), 2);
+    EXPECT_PATHS_EQUIVALENT(nonwork_paths[0], temp_dir / ".git");
+    EXPECT_PATHS_EQUIVALENT(nonwork_paths[1], temp_dir / "external/sanitizers-cmake");
 };
 
 TEST(repository_submodule_paths, codeowners_path)

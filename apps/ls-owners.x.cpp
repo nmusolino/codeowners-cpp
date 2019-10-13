@@ -133,10 +133,10 @@ int main(int argc, const char* argv[])
     if (paths.empty())
         paths.push_back(current_path);
 
+    std::vector<fs::path> to_skip = nonwork_directories(repo);
     for (const auto& start_path : paths)
     {
-        for (const auto& path :
-             co::make_filtered_file_range(start_path, ranges::views::single(repo.git_directory())))
+        for (const auto& path : co::make_filtered_file_range(start_path, to_skip))
         {
             const fs::path rel_path = fs::relative(path, work_dir);
             os << fs::relative(path, current_path).c_str() << ":    ";
