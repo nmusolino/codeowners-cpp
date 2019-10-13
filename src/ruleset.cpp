@@ -32,7 +32,7 @@ make_rule_map(std::vector<annotated_rule>&& arules)
     };
 
     auto rule_pairs =
-      ranges::move_view(arules) | ranges::views::transform(make_pattern_pair);
+      ranges::views::move(arules) | ranges::views::transform(make_pattern_pair);
     return std::make_unique<pattern_map<annotated_rule>>(rule_pairs.begin(),
                                                          rule_pairs.end());
 }

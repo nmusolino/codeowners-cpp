@@ -124,7 +124,7 @@ int main(int argc, const char* argv[])
     }
     assert(maybe_co_path);
 
-    const std::vector<co::annotated_rule> rules = co::parse(*maybe_co_path);
+    // TODO: parse rules and perform matching of paths.
 
     std::vector<fs::path>& paths = options.paths;
     if (paths.empty())
@@ -134,7 +134,7 @@ int main(int argc, const char* argv[])
     {
         for (const auto& path : co::filtered_file_range(".git", start_path))
         {
-            os << fs::relative(path, current_path) << '\n';
+            os << fs::relative(path, current_path).c_str() << '\n';
         }
     }
 
