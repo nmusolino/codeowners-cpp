@@ -43,7 +43,7 @@ private:
     }
 }
 
-#define EXPECT_PATHS_EQUIVALENT(p1, p2) EXPECT_TRUE(co::testing::equivalent((p1), (p2)))
+#define EXPECT_PATHS_EQUIVALENT(p1, p2) EXPECT_TRUE(co::equivalent((p1), (p2)))
 
 TEST(discover_repository_test, no_repository)
 {
