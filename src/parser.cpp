@@ -50,7 +50,7 @@ parse_line(const std::string& line)
 }
 
 std::vector<annotated_rule>
-parse(fs::path& path, const std::string& source_name)
+parse(const fs::path& path, const std::string& source_name)
 {
     // Use `source_name` if provided.
     std::string eff_source_name =

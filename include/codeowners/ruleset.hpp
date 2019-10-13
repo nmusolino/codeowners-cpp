@@ -23,7 +23,7 @@ public:
     {
     }
 
-    std::optional<annotated_rule> apply(const fs::path& fs);
+    std::optional<annotated_rule> apply(const fs::path& fs) const;
 
 private:
     std::unique_ptr<pattern_map<annotated_rule>> m_rule_map;
