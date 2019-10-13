@@ -8,10 +8,9 @@
 namespace co
 {
 
-struct TaggedInt
-  : public strong_typedef<TaggedInt, int>
-  , co::equality_comparable<TaggedInt>
-  , streamable<TaggedInt>
+struct TaggedInt : public strong_typedef<TaggedInt, int>,
+                   co::equality_comparable<TaggedInt>,
+                   streamable<TaggedInt>
 {
     using strong_typedef::strong_typedef;
 };
@@ -37,10 +36,9 @@ TEST(strong_typedef, operations)
     EXPECT_EQ(i2, TaggedInt{1});
 }
 
-struct TaggedString
-  : public strong_typedef<TaggedString, std::string>
-  , co::equality_comparable<TaggedString>
-  , streamable<TaggedString>
+struct TaggedString : public strong_typedef<TaggedString, std::string>,
+                      co::equality_comparable<TaggedString>,
+                      streamable<TaggedString>
 {
     using strong_typedef::strong_typedef;
 };

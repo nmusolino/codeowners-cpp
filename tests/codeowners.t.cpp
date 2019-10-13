@@ -3,7 +3,6 @@
 
 #include <gtest/gtest.h>
 
-
 #include <cstdio>
 
 /*
@@ -72,8 +71,8 @@ TEST(codeowners_test, test_codeowners_file)
 
     std::optional<fs::path> result = codeowners_file(repo_root);
     ASSERT_TRUE(result.has_value())
-        << "actual_path: " << actual_path << " (exists: " << std::boolalpha << fs::exists(actual_path) << ")";
-    EXPECT_EQ(*result, actual_path);
+        << "actual_path: " << actual_path << " (exists: " << std::boolalpha <<
+fs::exists(actual_path) << ")"; EXPECT_EQ(*result, actual_path);
 };
 
 TEST(codeowners_test, repository_constructible_from_child)

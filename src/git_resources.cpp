@@ -4,7 +4,6 @@
 
 #include <git2/global.h> /* git_libgit2_{init,shutdown} functions */
 
-
 namespace co
 {
 
@@ -16,8 +15,8 @@ struct libgit_handle
 
 namespace
 {
-/* Module-level global to ensure that init/shutdown functions are called. */
-static libgit_handle handle;
+    /* Module-level global to ensure that init/shutdown functions are called. */
+    static libgit_handle handle;
 } /* end anonymous namespace */
 
 } // end namespace 'co'

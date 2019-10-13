@@ -23,10 +23,7 @@ TEST(type_utils, deleter_type)
 
 struct X
 {
-    friend std::ostream& operator<<(std::ostream& os, const X&)
-    {
-        return os << "X";
-    }
+    friend std::ostream& operator<<(std::ostream& os, const X&) { return os << "X"; }
 };
 
 TEST(type_utils, is_streamable)

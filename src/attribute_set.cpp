@@ -11,27 +11,26 @@ namespace co
 const char* const attribute_set::default_attribute_name = "codeowners_attr";
 
 attribute_set::attribute_set()
-  : attribute_set(default_attribute_name)
+    : attribute_set(default_attribute_name)
 {
 }
 
 attribute_set::attribute_set(const std::string& attribute_name)
-  : m_attribute_name{attribute_name}
-  , m_temp_dir{}
-  , m_repository_ptr{make_resource_ptr<::git_repository>(::git_repository_init,
-                                                         m_temp_dir.c_str(),
-                                                         /*bare*/ false)}
-  , m_attributes_path{m_temp_dir / ".gitattributes"}
-  , m_attributes_file{m_attributes_path.string()}
+    : m_attribute_name{attribute_name}
+    , m_temp_dir{}
+    , m_repository_ptr{make_resource_ptr<::git_repository>(::git_repository_init,
+                                                           m_temp_dir.c_str(),
+                                                           /*bare*/ false)}
+    , m_attributes_path{m_temp_dir / ".gitattributes"}
+    , m_attributes_file{m_attributes_path.string()}
 {
     assert(m_repository_ptr);
     assert(m_attributes_file.is_open());
 }
 
-attribute_set::attribute_set(
-  const std::string& attribute_name,
-  const std::vector<std::pair<pattern, value_type>>& associations)
-  : attribute_set{attribute_name}
+attribute_set::attribute_set(const std::string& attribute_name,
+                             const std::vector<std::pair<pattern, value_type>>& associations)
+    : attribute_set{attribute_name}
 {
     for (const auto& [pat, value] : associations)
     {
@@ -40,21 +39,18 @@ attribute_set::attribute_set(
     do_sync();
 }
 
-attribute_set::attribute_set(
-  const std::vector<std::pair<pattern, value_type>>& associations)
-  : attribute_set(default_attribute_name, associations)
+attribute_set::attribute_set(const std::vector<std::pair<pattern, value_type>>& associations)
+    : attribute_set(default_attribute_name, associations)
 {
 }
 
-void
-attribute_set::clear()
+void attribute_set::clear()
 {
     attribute_set other{attribute_name()};
     swap(other);
 }
 
-void
-attribute_set::swap(attribute_set& other) noexcept
+void attribute_set::swap(attribute_set& other) noexcept
 {
     using std::swap;
     swap(m_attribute_name, other.m_attribute_name);
@@ -64,48 +60,39 @@ attribute_set::swap(attribute_set& other) noexcept
     swap(m_attributes_file, other.m_attributes_file);
 }
 
-void
-attribute_set::add_pattern(const pattern& pat, const value_type& value)
+void attribute_set::add_pattern(const pattern& pat, const value_type& value)
 {
     do_add_pattern(pat, value, /*sync*/ true);
 }
 
-void
-attribute_set::do_add_pattern(const pattern& pat,
-                              const value_type& value,
-                              bool sync)
+void attribute_set::do_add_pattern(const pattern& pat, const value_type& value, bool sync)
 {
-    m_attributes_file << pat << '\t' << attribute_name() << '=' << value
-                      << '\n';
+    m_attributes_file << pat << '\t' << attribute_name() << '=' << value << '\n';
     if (sync)
     {
         do_sync();
     }
 }
 
-void
-attribute_set::do_sync()
+void attribute_set::do_sync()
 {
     // Flush so that file on disk reflects any recent addition.
     m_attributes_file << std::flush;
     ::git_attr_cache_flush(m_repository_ptr.get());
 }
 
-attribute_set::value_type
-attribute_set::get(const fs::path& relative_path) const
+attribute_set::value_type attribute_set::get(const fs::path& relative_path) const
 {
     if (auto maybe_value_str = get_optional(relative_path))
     {
         return *maybe_value_str;
     }
     using namespace std::string_literals;
-    throw attribute_set::no_attribute_error{"No attribute value for: "s +
-                                            relative_path.string()};
+    throw attribute_set::no_attribute_error{"No attribute value for: "s + relative_path.string()};
 }
 
-attribute_set::value_type
-attribute_set::get(const fs::path& relative_path,
-                   const attribute_set::value_type& dflt) const
+attribute_set::value_type attribute_set::get(const fs::path& relative_path,
+                                             const attribute_set::value_type& dflt) const
 {
     if (auto maybe_value_str = get_optional(relative_path))
     {
@@ -119,17 +106,12 @@ attribute_set::get_optional(const fs::path& relative_path) const
 {
     const char* value = nullptr;
     constexpr std::uint32_t flags = GIT_ATTR_CHECK_NO_SYSTEM;
-    int retval =
-      ::git_attr_get(&value,
-                     const_cast<::git_repository*>(m_repository_ptr.get()),
-                     flags,
-                     relative_path.c_str(),
-                     attribute_name().c_str());
+    int retval = ::git_attr_get(&value, const_cast<::git_repository*>(m_repository_ptr.get()),
+                                flags, relative_path.c_str(), attribute_name().c_str());
     if (retval)
     {
         using namespace std::string_literals;
-        throw co::error{"Error getting attribute value: "s +
-                        relative_path.string()};
+        throw co::error{"Error getting attribute value: "s + relative_path.string()};
     }
     if (GIT_ATTR_UNSPECIFIED(value))
     {

@@ -8,8 +8,7 @@ namespace co
 TEST(parser, ruleset)
 {
     rule_source src{"", 0};
-    std::vector<annotated_rule> arules{
-      {src, {pattern{"*.hpp"}, {owner{"octocat"}}}}};
+    std::vector<annotated_rule> arules{{src, {pattern{"*.hpp"}, {owner{"octocat"}}}}};
 
     ruleset rset{arules};
 

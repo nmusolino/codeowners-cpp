@@ -59,4 +59,4 @@ TEST(strong_typedef_test, streamable_with_errors)
     EXPECT_TRUE(ss.fail());
 };
 
-}  // end namespace 'co'
+} // end namespace 'co'

@@ -34,11 +34,9 @@ public:
 
     attribute_set();
     attribute_set(const std::string& attribute_name);
-    attribute_set(
-      const std::vector<std::pair<pattern, value_type>>& associations);
-    attribute_set(
-      const std::string& attribute_name,
-      const std::vector<std::pair<pattern, value_type>>& associations);
+    attribute_set(const std::vector<std::pair<pattern, value_type>>& associations);
+    attribute_set(const std::string& attribute_name,
+                  const std::vector<std::pair<pattern, value_type>>& associations);
 
     /// Remove all pattern-value associations.
     void clear();
@@ -69,6 +67,7 @@ public:
 private:
     void do_add_pattern(const pattern& pat, const value_type& value, bool sync);
     void do_sync();
+
 private:
     static const char* const default_attribute_name;
     std::string m_attribute_name;

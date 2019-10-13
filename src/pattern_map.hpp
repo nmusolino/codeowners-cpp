@@ -9,8 +9,7 @@
 namespace co
 {
 
-template <typename T>
-class pattern_map
+template <typename T> class pattern_map
 {
     using mapping_type = std::map<pattern, T>;
     using pattern_index_type = std::vector<typename mapping_type::iterator>;
@@ -27,8 +26,7 @@ public:
     pattern_map(const pattern_map& other) = delete;
     pattern_map(pattern_map&& other);
 
-    template <typename InputIt>
-    pattern_map(InputIt first, InputIt last);
+    template <typename InputIt> pattern_map(InputIt first, InputIt last);
 
     pattern_map(std::initializer_list<value_type> ilist);
 
@@ -44,10 +42,7 @@ public:
     const T* get(const fs::path& p) const;
 
     /// Lookup by pattern.
-    bool contains(const key_type& key) const
-    {
-        return m_items.find(key) != m_items.end();
-    }
+    bool contains(const key_type& key) const { return m_items.find(key) != m_items.end(); }
     iterator find(const key_type& key) { return m_items.find(key); }
     const_iterator find(const key_type& key) const { return m_items.find(key); }
 
@@ -58,12 +53,10 @@ public:
 
     /// Insertion
     std::pair<iterator, bool> insert(const value_type& pair);
-    template <typename InputIt>
-    void insert(InputIt first, InputIt last);
+    template <typename InputIt> void insert(InputIt first, InputIt last);
     void insert(std::initializer_list<value_type> ilist);
 
-    std::pair<iterator, bool> insert_or_assign(const key_type& key,
-                                               const mapped_type& m);
+    std::pair<iterator, bool> insert_or_assign(const key_type& key, const mapped_type& m);
 
     /// General modification
     void clear();
@@ -95,10 +88,8 @@ private:
     void assert_invariant()
     {
         assert(m_items.size() == m_pattern_index.size());
-        assert(std::all_of(
-          m_pattern_index.begin(), m_pattern_index.end(), [&](const auto it) {
-              return m_items.find(it->first) == it;
-          }));
+        assert(std::all_of(m_pattern_index.begin(), m_pattern_index.end(),
+                           [&](const auto it) { return m_items.find(it->first) == it; }));
     }
 
 private:
@@ -110,29 +101,25 @@ private:
 template <typename T>
 template <typename InputIt>
 pattern_map<T>::pattern_map(InputIt first, InputIt last)
-  : pattern_map{}
+    : pattern_map{}
 {
     insert(first, last);
 }
 
 template <typename T>
 pattern_map<T>::pattern_map(std::initializer_list<value_type> ilist)
-  : pattern_map{}
+    : pattern_map{}
 {
     insert(ilist);
 }
 
-template <typename T>
-bool
-pattern_map<T>::contains(const fs::path& p) const
+template <typename T> bool pattern_map<T>::contains(const fs::path& p) const
 {
     auto it = find(p);
     return it != m_items.end();
 }
 
-template <typename T>
-auto
-pattern_map<T>::find(const fs::path& p) const -> const_iterator
+template <typename T> auto pattern_map<T>::find(const fs::path& p) const -> const_iterator
 {
     auto maybe_index_str = m_attr_set.get_optional(p);
     if (maybe_index_str)
@@ -144,9 +131,7 @@ pattern_map<T>::find(const fs::path& p) const -> const_iterator
     return m_items.end();
 }
 
-template <typename T>
-const T&
-pattern_map<T>::at(const fs::path& p) const
+template <typename T> const T& pattern_map<T>::at(const fs::path& p) const
 {
     auto it = find(p);
     if (it == m_items.end())
@@ -156,9 +141,7 @@ pattern_map<T>::at(const fs::path& p) const
     return it->second;
 }
 
-template <typename T>
-const T*
-pattern_map<T>::get(const fs::path& p) const
+template <typename T> const T* pattern_map<T>::get(const fs::path& p) const
 {
     auto it = find(p);
     if (it == m_items.end())
@@ -168,8 +151,7 @@ pattern_map<T>::get(const fs::path& p) const
     return std::addressof(it->second);
 }
 
-template <typename T>
-T& pattern_map<T>::operator[](const pattern& pat)
+template <typename T> T& pattern_map<T>::operator[](const pattern& pat)
 {
     // TODO: avoid default construction if not needed.
     auto [it, _] = insert(std::make_pair(pat, T{}));
@@ -178,8 +160,7 @@ T& pattern_map<T>::operator[](const pattern& pat)
 }
 
 template <typename T>
-auto
-pattern_map<T>::insert(const value_type& pair) -> std::pair<iterator, bool>
+auto pattern_map<T>::insert(const value_type& pair) -> std::pair<iterator, bool>
 {
     auto [it, inserted] = m_items.insert(pair);
     if (inserted)
@@ -191,9 +172,8 @@ pattern_map<T>::insert(const value_type& pair) -> std::pair<iterator, bool>
 }
 
 template <typename T>
-auto
-pattern_map<T>::insert_or_assign(const key_type& key, const mapped_type& m)
-  -> std::pair<iterator, bool>
+auto pattern_map<T>::insert_or_assign(const key_type& key, const mapped_type& m)
+    -> std::pair<iterator, bool>
 {
     auto [it, inserted] = m_items.insert_or_assign(key, m);
     if (inserted)
@@ -206,8 +186,7 @@ pattern_map<T>::insert_or_assign(const key_type& key, const mapped_type& m)
 
 template <typename T>
 template <typename InputIt>
-void
-pattern_map<T>::insert(InputIt first, InputIt last)
+void pattern_map<T>::insert(InputIt first, InputIt last)
 {
     while (first != last)
     {
@@ -217,25 +196,19 @@ pattern_map<T>::insert(InputIt first, InputIt last)
     assert_invariant();
 }
 
-template <typename T>
-void
-pattern_map<T>::insert(std::initializer_list<value_type> ilist)
+template <typename T> void pattern_map<T>::insert(std::initializer_list<value_type> ilist)
 {
     insert(ilist.begin(), ilist.end());
     assert_invariant();
 }
 
-template <typename T>
-void
-pattern_map<T>::clear()
+template <typename T> void pattern_map<T>::clear()
 {
     pattern_map<T> cleared;
     swap(cleared);
 }
 
-template <typename T>
-void
-pattern_map<T>::swap(pattern_map<T>& other)
+template <typename T> void pattern_map<T>::swap(pattern_map<T>& other)
 {
     using std::swap;
     swap(m_pattern_index, other.m_pattern_index);
@@ -243,9 +216,7 @@ pattern_map<T>::swap(pattern_map<T>& other)
     swap(m_items, other.m_items);
 }
 
-template <typename T>
-std::size_t
-pattern_map<T>::update_pattern_index(iterator it)
+template <typename T> std::size_t pattern_map<T>::update_pattern_index(iterator it)
 {
     assert(m_items.size() == m_pattern_index.size() + 1);
     m_pattern_index.push_back(it);
@@ -255,11 +226,6 @@ pattern_map<T>::update_pattern_index(iterator it)
     return index;
 }
 
-template <typename T>
-inline void
-swap(pattern_map<T>& a, pattern_map<T>& b)
-{
-    a.swap(b);
-}
+template <typename T> inline void swap(pattern_map<T>& a, pattern_map<T>& b) { a.swap(b); }
 
 } /* end namespace 'co' */

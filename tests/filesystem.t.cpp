@@ -68,8 +68,7 @@ TEST(temporary_directory_handle_test, move_construction)
         EXPECT_EQ(replacement_temp_dir.path(), temp_dir_path);
     }
     EXPECT_FALSE(fs::exists(temp_dir_path))
-      << "Expected path to be removed after move-construction: "
-      << temp_dir_path;
+        << "Expected path to be removed after move-construction: " << temp_dir_path;
 };
 
 TEST(temporary_directory_handle_test, move_assignment)

@@ -14,7 +14,8 @@ namespace po = boost::program_options;
 
 constexpr const char* PROGRAM_NAME = "ls-owners";
 
-struct list_owners_options {
+struct list_owners_options
+{
     bool debug;
     boost::optional<fs::path> repo_dir;
     bool include_ignored;
@@ -57,21 +58,16 @@ list_owners_options parse(int argc, const char* argv[])
 
     po::options_description visible_desc("Options");
     visible_desc.add_options()("help", "Print help message")(
-      "debug",
-      po::bool_switch(&options.debug)->default_value(false),
-      "Enable debug logging")(
-      "repo",
-      po::value<boost::optional<fs::path>>(&options.repo_dir),
-      "Repository directory (default: search from current directory)")(
-      "include-ignored",
-      po::bool_switch(&options.include_ignored)->default_value(false),
-      "Include files ignored by git");
+        "debug", po::bool_switch(&options.debug)->default_value(false),
+        "Enable debug logging")("repo", po::value<boost::optional<fs::path>>(&options.repo_dir),
+                                "Repository directory (default: search from current directory)")(
+        "include-ignored", po::bool_switch(&options.include_ignored)->default_value(false),
+        "Include files ignored by git");
 
     po::options_description opts_desc;
     opts_desc.add(visible_desc)
-      .add_options()("input-files",
-                     po::value<std::vector<fs::path>>(&options.paths),
-                     "Input files");
+        .add_options()("input-files", po::value<std::vector<fs::path>>(&options.paths),
+                       "Input files");
 
     po::positional_options_description pos_opts_desc;
     pos_opts_desc.add("input-files", -1);
@@ -79,9 +75,11 @@ list_owners_options parse(int argc, const char* argv[])
     auto parser = po::command_line_parser(argc, argv).options(opts_desc).positional(pos_opts_desc);
 
     po::variables_map vm;
-    try {
+    try
+    {
         po::store(parser.run(), vm);
-    } catch (const boost::program_options::unknown_option& err)
+    }
+    catch (const boost::program_options::unknown_option& err)
     {
         print_help(std::cout, visible_desc) << std::flush;
         std::exit(EXIT_FAILURE);
@@ -97,7 +95,6 @@ list_owners_options parse(int argc, const char* argv[])
     return options;
 }
 
-
 int main(int argc, const char* argv[])
 {
     fs::path current_path = fs::current_path();
@@ -106,8 +103,7 @@ int main(int argc, const char* argv[])
     list_owners_options options = parse(argc, argv);
     fs::path discovery_start = options.repo_dir.value_or(current_path);
 
-    const std::optional<co::repository> maybe_repo =
-      co::repository::try_discover(discovery_start);
+    const std::optional<co::repository> maybe_repo = co::repository::try_discover(discovery_start);
 
     if (!maybe_repo)
     {
@@ -121,8 +117,7 @@ int main(int argc, const char* argv[])
     auto maybe_co_path = co::codeowners_path(work_dir);
     if (!maybe_co_path)
     {
-        os << "No CODEOWNERS file found; repo work directory: "
-           << repo.work_directory() << '\n';
+        os << "No CODEOWNERS file found; repo work directory: " << repo.work_directory() << '\n';
         return EXIT_SUCCESS;
     }
     assert(maybe_co_path);

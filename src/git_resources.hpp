@@ -16,14 +16,11 @@ struct git_repository; // forward
 namespace co
 {
 
-template <typename T>
-struct resource_traits;
+template <typename T> struct resource_traits;
 
-template <typename T>
-using deleter_type = void (*)(T*);
+template <typename T> using deleter_type = void (*)(T*);
 
-template <>
-struct resource_traits<::git_repository>
+template <> struct resource_traits<::git_repository>
 {
     using value_type = ::git_repository;
     constexpr static deleter_type<value_type> deleter = ::git_repository_free;
@@ -31,8 +28,7 @@ struct resource_traits<::git_repository>
 };
 
 template <typename T, typename F, typename... Args>
-std::unique_ptr<T, deleter_type<T>>
-make_resource_ptr(F f, Args... args)
+std::unique_ptr<T, deleter_type<T>> make_resource_ptr(F f, Args... args)
 {
     using traits = resource_traits<T>;
     T* resource = nullptr;
@@ -40,19 +36,18 @@ make_resource_ptr(F f, Args... args)
     if (error)
     {
         using namespace std::string_literals;
-        throw co::error{"Error while creating "s + traits::resource_name +
-                        ": error code " + std::to_string(error)};
+        throw co::error{"Error while creating "s + traits::resource_name + ": error code "
+                        + std::to_string(error)};
     }
     assert(resource);
-    return std::unique_ptr<T, deleter_type<T>>(resource,
-                                               resource_traits<T>::deleter);
+    return std::unique_ptr<T, deleter_type<T>>(resource, resource_traits<T>::deleter);
 };
 
 class git_buffer
 {
 public:
     git_buffer()
-      : m_buf{empty_buf()}
+        : m_buf{empty_buf()}
     {
     }
 

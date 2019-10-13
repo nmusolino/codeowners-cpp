@@ -1,6 +1,6 @@
-BasedOnStyle: Mozilla
+BasedOnStyle: WebKit
 BreakBeforeBraces: Allman
-AccessModifierOffset: -4
+AlignAfterOpenBracket: Align
 Cpp11BracedListStyle: true
-IndentWidth: 4
-SpaceAfterTemplateKeyword: true
+SpaceBeforeCpp11BracedList: false
+ColumnLimit: 100
