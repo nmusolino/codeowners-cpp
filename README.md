@@ -9,22 +9,32 @@ owners" within a project, based on Github's CODEOWNERS file convention.
 
 Github [introduced "code owners"](https://github.blog/2017-07-06-introducing-code-owners/)
 in 2017 as a way for a project to designate reviewers of files with a Git
-repository.  According to Github's
-[reference page](https://help.github.com/en/articles/about-code-owners),
-a CODEOWNERS file can be placed at one of three locations, and uses filename
-patterns, similar to a `.gitignore` or `.gitattributes` file.
+repository.  Github repository owners can require that pull requests be reviewed
+by specific users who are identified, using file patterns, in the CODEOWNERS listing.
 
 Here is a sample CODEOWNERS file:
 
 ```
-*             @global-owner1 @global-owner2
-*.js          @js-owner
-*.go          @go-owner
-/build/logs/  @doctocat
-apps/         @octocat
-docs/*        @doc-user
-/docs/        @doc-user
+# Default ownership can be established using the `*` pattern.
+*             @j_random_maintainer
+
+# C++ files are owned by user `cpp-owner`.
+# Later rules supercede earlier ones, so files matching these patterns
+# will be owned by @cpp-owners, not @j_random_maintainer.
+*.hpp         @cpp-owner
+*.cpp         @cpp-owner
+
+# All documentation maintained by `dholliday` and `dbrown`.
+# Patterns can correspond to multiple owners.
+docs/**       @dholliday @dbrown
 ```
+
+* The code ownership feature is documented at Github's
+["About code owners"](https://help.github.com/en/articles/about-code-owners) page.
+* The CODEOWNERS file uses filename patterns, similar to `.gitignore` or `.gitattributes`
+files, that are matched against files in the repository.
+* Code ownership files can be placed at one of three locations, relative to a repository root:
+ `CODEOWNERS`, `.docs/CODEOWNERS`, or `.github/CODEOWNERS`.
 
 ## Usage
 
