@@ -129,11 +129,11 @@ int main(int argc, const char* argv[])
 
     // TODO: parse rules and perform matching of paths.
 
-    std::vector<fs::path>& paths = options.paths;
-    if (paths.empty())
-        paths.push_back(current_path);
-
+    std::vector<fs::path> paths
+        = options.paths.empty() ? std::vector<fs::path>{{"."}} : options.paths;
+    paths = co::distinct_prefixed_paths(std::move(paths));
     std::vector<fs::path> to_skip = nonwork_directories(repo);
+
     for (const auto& start_path : paths)
     {
         for (const auto& path : co::make_filtered_file_range(start_path, to_skip))

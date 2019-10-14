@@ -43,6 +43,28 @@ TEST(ensure_exists_test, leaves_existing_directory)
     EXPECT_TRUE(fs::is_directory(temp_dir));
 };
 
+TEST(ensure_exists_test, distinct_prefixed_paths)
+{
+    // TODO: shuffle input vector.
+    std::vector<fs::path> input{{"x", "x/y1", "x/y2", "y/z", "y/z/a"}};
+    std::vector<fs::path> result = distinct_prefixed_paths(input);
+
+    ASSERT_EQ(result.size(), 2);
+    EXPECT_EQ(result[0], input[0]); // value:  "x"
+    EXPECT_EQ(result[1], input[3]); // value:  "y/z"
+};
+
+TEST(ensure_exists_test, distinct_prefixed_paths_with_repeated_paths)
+{
+    // When an input contains repeated elements, those repeated elements are deduplicated in the
+    // output.
+    std::vector<fs::path> input{5, "x/y"};
+    std::vector<fs::path> result = distinct_prefixed_paths(input);
+
+    ASSERT_EQ(result.size(), 1);
+    EXPECT_EQ(result[0], input[0]);
+};
+
 TEST(temporary_directory_handle_test, construction_and_removal)
 {
     fs::path temp_dir_path;

@@ -4,6 +4,7 @@
 #include <boost/process.hpp>
 
 #include <fstream>
+#include <vector>
 
 namespace fs = boost::filesystem;
 
@@ -11,6 +12,16 @@ namespace co
 {
 
 inline void ensure_exists(const fs::path& p) { std::ofstream ofs{p.string(), std::ios::app}; }
+
+/**
+ * Return a subset of `paths` such that the recursive iteration over each path in the
+ * returned container produces disjoint sets of paths.
+ *
+ * This function processes `paths`, and removes any elements for which a strict prefix is also
+ * contained in `paths`.  For example, if the input is ["x", "x/y", "x/y/z", "w/v"], the output
+ * would be ["x", "w/v"], because "x/y"
+ */
+std::vector<fs::path> distinct_prefixed_paths(std::vector<fs::path> paths);
 
 struct temporary_directory_handle : public boost::noncopyable
 {

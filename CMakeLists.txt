@@ -45,7 +45,7 @@ add_library(codeowners
         src/pattern_map.hpp
         src/repository.cpp
         src/ruleset.cpp
-        )
+        src/filesystem.cpp)
 target_include_directories(codeowners
         PUBLIC include
         PRIVATE external/libgit2/include
