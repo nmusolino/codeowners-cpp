@@ -17,11 +17,14 @@ struct git_repository; // forward
 namespace co
 {
 
-template <typename T> struct resource_traits;
+template <typename T>
+struct resource_traits;
 
-template <typename T> using deleter_type = void (*)(T*);
+template <typename T>
+using deleter_type = void (*)(T*);
 
-template <> struct resource_traits<::git_repository>
+template <>
+struct resource_traits<::git_repository>
 {
     using value_type = ::git_repository;
     constexpr static deleter_type<value_type> deleter = ::git_repository_free;
