@@ -6,3 +6,4 @@
 /// details).
 
 struct git_repository;
+struct git_index;

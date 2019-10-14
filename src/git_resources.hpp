@@ -5,6 +5,7 @@
 #include <codeowners/type_utils.hpp>
 
 #include <git2/buffer.h>
+#include <git2/index.h>
 #include <git2/repository.h>
 
 #include <memory>
@@ -25,6 +26,14 @@ template <> struct resource_traits<::git_repository>
     using value_type = ::git_repository;
     constexpr static deleter_type<value_type> deleter = ::git_repository_free;
     constexpr static const char* resource_name = "git_repository";
+};
+
+template <>
+struct resource_traits<::git_index>
+{
+    using value_type = ::git_index;
+    constexpr static deleter_type<value_type> deleter = ::git_index_free;
+    constexpr static const char* resource_name = "git_index";
 };
 
 template <typename T, typename F, typename... Args>
