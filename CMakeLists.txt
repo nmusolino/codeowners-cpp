@@ -29,6 +29,7 @@ add_library(codeowners
         include/codeowners/codeowners.hpp
         include/codeowners/errors.hpp
         include/codeowners/filesystem.hpp
+        include/codeowners/index.hpp
         include/codeowners/parser.hpp
         include/codeowners/path_sources.hpp
         include/codeowners/repository.hpp
@@ -41,11 +42,13 @@ add_library(codeowners
         src/errors.cpp
         src/git_resources.hpp
         src/git_resources.cpp
+        src/index.cpp
         src/parser.cpp
         src/pattern_map.hpp
         src/repository.cpp
         src/ruleset.cpp
-        src/filesystem.cpp)
+        src/filesystem.cpp
+        )
 target_include_directories(codeowners
         PUBLIC include
         PRIVATE external/libgit2/include

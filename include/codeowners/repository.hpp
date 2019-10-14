@@ -51,6 +51,8 @@ public:
     std::vector<fs::path> submodule_paths() const;
 
 private:
+    friend class index;
+
     repository(owning_ptr<::git_repository>&& ptr)
         : m_ptr{std::move(ptr)}
     {
