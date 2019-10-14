@@ -4,6 +4,8 @@
 #include "codeowners/git_resources_fwd.hpp"
 #include "codeowners/type_utils.hpp"
 
+#include <memory>
+#include <optional>
 #include <vector>
 
 namespace co

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <codeowners/errors.hpp>
-#include <codeowners/strong_typedef.hpp>
 #include <codeowners/type_utils.hpp>
 
 #include <git2/buffer.h>
@@ -9,7 +8,6 @@
 #include <git2/repository.h>
 
 #include <memory>
-#include <optional>
 #include <string>
 
 
