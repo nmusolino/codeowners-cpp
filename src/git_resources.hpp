@@ -12,7 +12,6 @@
 #include <optional>
 #include <string>
 
-struct git_repository; // forward
 
 namespace co
 {
