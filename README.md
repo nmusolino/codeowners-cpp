@@ -38,7 +38,67 @@ files, that are matched against files in the repository.
 
 ## Usage
 
-*Coming soon.*
+This repository includes a command-line utility `ls-owners`, which lists files in the
+repository and their corresponding owners.
+
+#### Listing file owners
+
+When invoked on its own, the utility will list all files in the current directory,
+and (recursively) in all subdirectories.
+```
+$ ls-owners
+.clang-format:    @nmusolino
+.github/ISSUE_TEMPLATE.md:    @nmusolino
+.github/PULL_REQUEST_TEMPLATE.md:    @nmusolino
+.gitignore:    @nmusolino
+.gitmodules:    @nmusolino
+[...]
+```
+
+The utility can be invoked with specific files or directories.
+
+```
+$ ls-owners include/
+include/codeowners/codeowners.hpp:    @nmusolino
+include/codeowners/errors.hpp:    @nmusolino
+include/codeowners/filesystem.hpp:    @nmusolino
+include/codeowners/git_resources_fwd.hpp:    @nmusolino
+include/codeowners/parser.hpp:    @nmusolino
+[...]
+```
+
+#### Coming soon:  specifying a CODEOWNERS file in a non-standard location
+A codeowners file can be specified on the command line using the `--owners-file` option:
+```
+$ ls-owners --owners-file owners.txt src/    # Not yet implemented
+```
+When a file is specified by the user, the `ls-owners` utility will not attempt to locate
+a CODEOWNERS file in the standard locations.
+
+
+#### Coming soon:  filters for files
+
+The `ls-owners` utility will be able to list files based on their status within
+the git repository.
+
+```
+$ ls-owners --index-only            # Not yet implemented.
+$ ls-owners --include-untracked     # Not yet implemented.
+$ ls-owners --include-ignored       # Implies `--include-untracked`.  Not yet implemented.
+```
+
+#### Coming soon:  filters for owners
+
+The `ls-owners` utility can be used to list all files with or without owners:
+```
+$ ls-owners --unowned src/          # Not yet implemented
+$ ls-owners --owned src/            # Not yet implemented
+```
+
+List all files for which user `@fred` is an owner:
+```
+$ ls-owners --owner=@fred           # Not yet implemented
+```
 
 ## Building the C++ project
 
