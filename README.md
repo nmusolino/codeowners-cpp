@@ -30,11 +30,11 @@ docs/**       @dholliday @dbrown
 ```
 
 * The code ownership feature is documented at Github's
-["About code owners"](https://help.github.com/en/articles/about-code-owners) page.
+  ["About code owners"](https://help.github.com/en/articles/about-code-owners) page.
 * The CODEOWNERS file uses filename patterns, similar to `.gitignore` or `.gitattributes`
-files, that are matched against files in the repository.
-* Code ownership files can be placed at one of three locations, relative to a repository root:
- `CODEOWNERS`, `.docs/CODEOWNERS`, or `.github/CODEOWNERS`.
+  files, that are matched against files in the repository.
+* Code ownership files can be placed at one of three locations, relative to
+  the repository root: `CODEOWNERS`, `.docs/CODEOWNERS`, or `.github/CODEOWNERS`.
 
 ## Usage
 
@@ -102,23 +102,49 @@ $ ls-owners --owner=@fred           # Not yet implemented
 
 ## Building the C++ project
 
-*Coming soon.*
+The `codeowners-cpp` project uses the CMake build system.  The CMake system is itself
+controlled by a standard Makefile (which is somewhat unconventional).
+
+To build the `ls-owners` utility:
+```
+$ make ls-owners
+```
+
+To build and execute the test suite:
+```
+$ make test
+```
+
+Invoking `make all` is equivalent to the `test` and `ls-owners` targets:
+```
+$ make all
+```
 
 ## Contributing to the `codeowners-cpp` project
 
-*Coming soon.*
+Contributions to the `codeowners-cpp` are welcome from all users.
+
+Feature requests and bug reports can be created using "New issue" button on
+the project's [Issues](https://github.com/nmusolino/codeowners-cpp/issues) page.
+
+Pull requests are welcome and can be created using the standard Github
+pull request workflow.
 
 ## Acknowledgements
 
 Codeowners-cpp uses the following libraries, which are included as git submodules:
 
-* [libgit2](https://libgit2.org): "a portable, pure C implementation of the Git core methods."
-* [santizers-cmake](https://github.com/arsenm/sanitizers-cmake): "CMake module to enable sanitizers for binary targets."
-* [Google Test](https://github.com/google/googletest): Google testing and mocking framework.
+* [libgit2](https://libgit2.org):
+  "a portable, pure C implementation of the Git core methods."
+* [santizers-cmake](https://github.com/arsenm/sanitizers-cmake):
+  "CMake module to enable sanitizers for binary targets."
+* [Google Test](https://github.com/google/googletest):
+  Google testing and mocking framework.
 
 The contributors to these external projects are kindly acknowledged.
 
 ## License
 
-This project is licensed under the GNU General Public License, version 3.  See the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License, version 3.
+See the [LICENSE](LICENSE) file for details.
 
