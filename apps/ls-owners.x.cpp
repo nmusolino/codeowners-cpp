@@ -1,10 +1,13 @@
 #include <codeowners/codeowners.hpp>
 #include <codeowners/filesystem.hpp>
 #include <codeowners/parser.hpp>
-#include <codeowners/path_filters.hpp>
+#include <codeowners/path_sources.hpp>
+#include <codeowners/repository.hpp>
 #include <codeowners/ruleset.hpp>
 
 #include <boost/program_options.hpp>
+#include <range/v3/view/concat.hpp>
+#include <range/v3/view/single.hpp>
 
 #include <codeowners/parser.hpp>
 #include <cstdlib>
@@ -126,13 +129,14 @@ int main(int argc, const char* argv[])
 
     // TODO: parse rules and perform matching of paths.
 
-    std::vector<fs::path>& paths = options.paths;
-    if (paths.empty())
-        paths.push_back(current_path);
+    std::vector<fs::path> paths
+        = options.paths.empty() ? std::vector<fs::path>{{"."}} : options.paths;
+    paths = co::distinct_prefixed_paths(std::move(paths));
+    std::vector<fs::path> to_skip = nonwork_directories(repo);
 
     for (const auto& start_path : paths)
     {
-        for (const auto& path : co::filtered_file_range(".git", start_path))
+        for (const auto& path : co::make_filtered_file_range(start_path, to_skip))
         {
             const fs::path rel_path = fs::relative(path, work_dir);
             os << fs::relative(path, current_path).c_str() << ":    ";
