@@ -59,6 +59,12 @@ std::unique_ptr<T, deleter_type<T>> make_resource_ptr(F f, Args... args)
     return std::unique_ptr<T, deleter_type<T>>(resource, resource_traits<T>::deleter);
 };
 
+template <typename T>
+std::unique_ptr<T, deleter_type<T>> null_resource_ptr()
+{
+    return std::unique_ptr<T, deleter_type<T>>{nullptr, resource_traits<T>::deleter};
+};
+
 class git_buffer
 {
 public:
