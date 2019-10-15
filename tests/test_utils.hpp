@@ -1,3 +1,5 @@
+#pragma once
+
 #include <codeowners/filesystem.hpp>
 
 #include <gtest/gtest.h>
@@ -28,7 +30,7 @@ private:
 
 /// Return whether the two paths are equivalent, i.e. refer to the same
 /// filesystem entity.
-::testing::AssertionResult equivalent(const fs::path& p1, const fs::path& p2)
+inline ::testing::AssertionResult equivalent(const fs::path& p1, const fs::path& p2)
 {
     // NOTE: Google Test bug #1614 applies when printing two fs::path objects.
     // https://github.com/google/googletest/issues/1614
