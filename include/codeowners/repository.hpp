@@ -4,6 +4,8 @@
 #include "codeowners/git_resources_fwd.hpp"
 #include "codeowners/type_utils.hpp"
 
+#include <memory>
+#include <optional>
 #include <vector>
 
 namespace co
@@ -49,6 +51,8 @@ public:
     std::vector<fs::path> submodule_paths() const;
 
 private:
+    friend class index;
+
     repository(owning_ptr<::git_repository>&& ptr)
         : m_ptr{std::move(ptr)}
     {
