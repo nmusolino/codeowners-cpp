@@ -25,8 +25,9 @@ namespace
     std::unique_ptr<pattern_map<annotated_rule>> make_rule_map(std::vector<annotated_rule>&& arules)
     {
         auto make_pattern_pair = [](annotated_rule&& ar) -> map_value_type {
+            // Need to copy pattern before moving from the annotated rule.
             pattern pat{ar.rule.pattern};
-            return map_value_type{pat, std::move(ar)};
+            return map_value_type{std::move(pat), std::move(ar)};
         };
 
         auto rule_pairs = ranges::views::move(arules) | ranges::views::transform(make_pattern_pair);
