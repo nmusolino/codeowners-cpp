@@ -3,7 +3,6 @@
 #include <range/v3/view/subrange.hpp>
 #include <range/v3/view/transform.hpp>
 
-#include <iostream>
 #include <vector>
 
 namespace co

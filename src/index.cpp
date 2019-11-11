@@ -47,19 +47,16 @@ void index_iterator::increment()
 {
     const ::git_index_entry* entry;
     auto retval = ::git_index_iterator_next(&entry, m_ptr.get());
-    std::cout << "next retval: " << retval << '\n';
     if (retval == 0)
     {
         m_path = entry->path;
-        std::cout << "path: " << m_path << '\n';
     }
     else
     {
-        std::cout << "iterator exhausted" << '\n';
         // Underlying iterator is exhausted.
         entry = nullptr;
         m_ptr.reset();
-        m_path = "BAD_PATH_END_ITERATOR_DEREFERENCED";
+        m_path = "INVALID_PATH_END_ITERATOR_DEREFERENCED";
     }
 }
 

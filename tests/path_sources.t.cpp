@@ -56,8 +56,16 @@ TEST(filter_iterator, skips_indicated_directory)
 
     std::vector<fs::directory_entry> result(begin, end);
     ASSERT_EQ(result.size(), 2);
-    EXPECT_EQ(fs::relative(result[0], temp_dir).string(), "a");
-    EXPECT_EQ(fs::relative(result[1], temp_dir).string(), "b");
+
+    // Sort to acheive deterministic order.
+    std::sort(result.begin(), result.end());
+
+    for (auto& [dent, expected] : {std::make_pair(result[0], "a"), std::make_pair(result[1], "b")})
+    {
+        const fs::path dent_relative = fs::relative(dent, temp_dir);
+        EXPECT_EQ(dent_relative.string(), expected)
+            << "directory_entry path: " << dent.path() << "; relative: " << dent_relative;
+    }
 };
 
 TEST(filter_iterator, skip_multiple_directories)
