@@ -16,9 +16,6 @@ namespace co
 template <typename T>
 struct resource_traits;
 
-template <typename T>
-using deleter_type = void (*)(T*);
-
 template <>
 struct resource_traits<::git_repository>
 {
