@@ -3,7 +3,6 @@
 #include <range/v3/view/unique.hpp>
 
 #include <algorithm>
-#include <iostream>
 
 namespace co
 {
