@@ -24,6 +24,7 @@ addons:
 matrix:
   allow_failures:
     - os: linux
+      compiler: gcc
 
 install:
     - ./travis/install-deps.sh
