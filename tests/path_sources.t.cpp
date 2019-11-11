@@ -58,10 +58,7 @@ TEST(filter_iterator, skips_indicated_directory)
     ASSERT_EQ(result.size(), 2);
 
     // Sort to acheive deterministic order.
-    std::sort(result.begin(), result.end(),
-              [](const fs::directory_entry& dent1, const fs::directory_entry& dent2) {
-                  return dent1.path() < dent2.path();
-              });
+    std::sort(result.begin(), result.end());
 
     for (auto& [dent, expected] : {std::make_pair(result[0], "a"), std::make_pair(result[1], "b")})
     {
