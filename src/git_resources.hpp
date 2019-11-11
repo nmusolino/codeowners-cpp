@@ -1,30 +1,46 @@
 #pragma once
 
 #include <codeowners/errors.hpp>
-#include <codeowners/strong_typedef.hpp>
 #include <codeowners/type_utils.hpp>
 
 #include <git2/buffer.h>
+#include <git2/index.h>
 #include <git2/repository.h>
 
 #include <memory>
-#include <optional>
 #include <string>
-
-struct git_repository; // forward
 
 namespace co
 {
 
-template <typename T> struct resource_traits;
+template <typename T>
+struct resource_traits;
 
-template <typename T> using deleter_type = void (*)(T*);
+template <typename T>
+using deleter_type = void (*)(T*);
 
-template <> struct resource_traits<::git_repository>
+template <>
+struct resource_traits<::git_repository>
 {
     using value_type = ::git_repository;
     constexpr static deleter_type<value_type> deleter = ::git_repository_free;
     constexpr static const char* resource_name = "git_repository";
+};
+
+template <>
+struct resource_traits<::git_index>
+{
+    using value_type = ::git_index;
+    constexpr static deleter_type<value_type> deleter = ::git_index_free;
+    constexpr static const char* resource_name = "git_index";
+};
+
+template <>
+struct resource_traits<::git_index_iterator>
+{
+    using value_type = ::git_index_iterator;
+    constexpr static deleter_type<value_type> deleter = ::git_index_iterator_free;
+    constexpr static const char* resource_name = "git_index_iterator";
 };
 
 template <typename T, typename F, typename... Args>
@@ -41,6 +57,12 @@ std::unique_ptr<T, deleter_type<T>> make_resource_ptr(F f, Args... args)
     }
     assert(resource);
     return std::unique_ptr<T, deleter_type<T>>(resource, resource_traits<T>::deleter);
+};
+
+template <typename T>
+std::unique_ptr<T, deleter_type<T>> null_resource_ptr()
+{
+    return std::unique_ptr<T, deleter_type<T>>{nullptr, resource_traits<T>::deleter};
 };
 
 class git_buffer
