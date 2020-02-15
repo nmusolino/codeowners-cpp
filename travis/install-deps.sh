@@ -10,8 +10,8 @@ case "$TRAVIS_OS_NAME" in
         brew install boost || brew upgrade boost
         case "$TRAVIS_COMPILER" in
             gcc)
-                brew install gcc-7
-                export CC=gcc-7 CXX=g++-7
+                brew install gcc
+                export CC=gcc-9 CXX=g++-9
             ;;
             *)
                 echo "No compiler installation needed for: $TRAVIS_COMPILER"
