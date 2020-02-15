@@ -1,12 +1,19 @@
 language: cpp
+
+jobs:
+  include:
+    - os: linux
+      dist: xenial
+    - os: linux
+      dist: bionic
+    - os: osx
+      osx_image: xcode10.1
+    - os: osx
+      osx_image: xcode10.3
+
 compiler:
   - clang
   - gcc
-os:
-  - osx
-  - linux
-dist: xenial
-osx_image: xcode10.1
 
 addons:
   apt:
