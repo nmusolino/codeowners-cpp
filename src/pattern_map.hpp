@@ -154,7 +154,8 @@ template <typename T> const T* pattern_map<T>::get(const fs::path& p) const
 template <typename T> T& pattern_map<T>::operator[](const pattern& pat)
 {
     // TODO: avoid default construction if not needed.
-    auto [it, _] = insert(std::make_pair(pat, T{}));
+    auto [it, inserted] = insert(std::make_pair(pat, T{}));
+    (void)inserted;
     assert_invariant();
     return it->second;
 }
