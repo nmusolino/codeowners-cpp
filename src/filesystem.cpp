@@ -12,6 +12,9 @@ namespace
     bool share_prefix(const fs::path& p, const fs::path& q)
     {
         auto [p_it, q_it] = std::mismatch(p.begin(), p.end(), q.begin(), q.end());
+        // Work around gcc bug #81767 (unused variable from structured binding).
+        // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81767
+        (void)q_it;
         return p_it == p.end();
     }
 

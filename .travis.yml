@@ -1,11 +1,16 @@
 language: cpp
+
+os:
+  - linux
+  - osx
+
 compiler:
   - clang
   - gcc
-os:
-  - osx
-  - linux
-dist: xenial
+
+dist:
+  - bionic
+
 osx_image: xcode10.1
 
 addons:
@@ -16,19 +21,15 @@ addons:
     packages:
       - clang-format
       - make
-      - g++-8
+      - g++-9
       - libboost1.70
       - libboost1.70-dev
     update: true
 
-matrix:
-  allow_failures:
-    - os: linux
-      compiler: gcc
-
 install:
-    - ./travis/install-deps.sh
+  - env | grep '^TRAVIS' | sort
+  - source ./travis/install-deps.sh
 
 script:
-    - export PATH=/usr/local/bin:$PATH
-    - make all
+  - export PATH=/usr/local/bin:$PATH
+  - make all
