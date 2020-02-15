@@ -77,9 +77,6 @@ private:
     std::ofstream m_attributes_file; /// Output stream
 };
 
-inline void swap(attribute_set& lhs, attribute_set& rhs)
-{
-    lhs.swap(rhs);
-}
+inline void swap(attribute_set& lhs, attribute_set& rhs) { lhs.swap(rhs); }
 
 } // end namespace 'co'
