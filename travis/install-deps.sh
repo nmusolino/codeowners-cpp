@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x 
+env | grep --extended 'TRAVIS_(OS_NAME|COMPILER)'
 
 case "$TRAVIS_OS_NAME" in
     osx)
@@ -31,9 +31,8 @@ case "$TRAVIS_OS_NAME" in
 esac
 
 for program in make cmake $CC $CXX; do
-    which $program
+    echo "$program:" $(which $program)
     $program --version
 done
 
 echo "Done installing dependencies."
-exit 0
