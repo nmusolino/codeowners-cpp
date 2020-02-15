@@ -1,7 +1,7 @@
 #include <codeowners/codeowners.hpp>
 #include <codeowners/filesystem.hpp>
 #include <codeowners/parser.hpp>
-#include <codeowners/path_sources.hpp>
+#include <codeowners/recursive_filter_iterator.hpp>
 #include <codeowners/repository.hpp>
 #include <codeowners/ruleset.hpp>
 

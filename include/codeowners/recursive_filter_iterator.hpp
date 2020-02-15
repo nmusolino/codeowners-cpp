@@ -18,15 +18,16 @@ ranges::subrange<fs::recursive_directory_iterator> make_file_range(const fs::pat
  *  The `recursive_filter_iterator` class is an adapted iterator that can skip
  *  descending into directories based on a predicate.
  *
- *  The predicate in question is applied only to directories.  When the predicate
- *  returns true, the iterator traverses the contents of the directory as normal.
- *  When the predicate returns false, the directory will be skipped.
+ *  The predicate is applied only to directories.  When the predicate returns true,
+ *  the iterator traverses the contents of the directory as normal.  When the predicate
+ *  returns false, the directory will be skipped.
  *
- *  While this could be implemented as a filter on top of `recursive_filter_iterator`,
- *  it is more efficient to preemptively skip descending into directories, rather
- *  than iterating over everything and filtering out elements.  As an example, this
- *  could be used to skip recursive iteration through a large submodule's directory
- *  altogether, rather than iterating over (and subsequently dropping) every file in
+ *  While this could be implemented as a filter on top of
+ *  `filesystem::recursive_filter_iterator`, it is more efficient to preemptively skip
+ *  descending into directories, rather than iterating over everything and filtering out
+ *  elements.  As an example, this can skip recursive iteration through a large submodule's
+ *  directory altogether, rather than iterating over (and subsequently dropping) every file
+ *  in that directory.
  */
 struct recursive_filter_iterator
     : public boost::iterator_adaptor<recursive_filter_iterator, fs::recursive_directory_iterator>
