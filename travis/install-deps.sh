@@ -22,8 +22,8 @@ case "$TRAVIS_OS_NAME" in
 
 	# Create symlinks so that new versions of gcc and g++ will take
 	# priority in PATH.
-	sudo ln -s /usr/bin/gcc-7 /usr/local/bin/gcc
-	sudo ln -s /usr/bin/g++-7 /usr/local/bin/g++
+	sudo ln -s /usr/bin/gcc-8 /usr/local/bin/gcc
+	sudo ln -s /usr/bin/g++-8 /usr/local/bin/g++
 	;;
     *)
 	echo "install-deps.sh: Unknown TRAVIS_OS_NAME: $TRAVIS_OS_NAME"
