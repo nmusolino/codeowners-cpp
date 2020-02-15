@@ -32,7 +32,7 @@ add_library(codeowners
         include/codeowners/filesystem.hpp
         include/codeowners/index.hpp
         include/codeowners/parser.hpp
-        include/codeowners/path_sources.hpp
+        include/codeowners/recursive_filter_iterator.hpp
         include/codeowners/repository.hpp
         include/codeowners/ruleset.hpp
         include/codeowners/type_utils.hpp
@@ -49,7 +49,7 @@ add_library(codeowners
         src/repository.cpp
         src/ruleset.cpp
         src/filesystem.cpp
-        )
+        src/recursive_filter_iterator.cpp)
 target_include_directories(codeowners
         PUBLIC include
         PRIVATE external/libgit2/include

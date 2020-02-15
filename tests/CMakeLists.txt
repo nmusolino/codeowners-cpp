@@ -8,7 +8,7 @@ add_executable(codeowners_tests
         index.t.cpp
         parser.t.cpp
         pattern_map.t.cpp
-        path_sources.t.cpp
+        recursive_filter_iterator.t.cpp
         repository.t.cpp
         ruleset.t.cpp
         types.t.cpp

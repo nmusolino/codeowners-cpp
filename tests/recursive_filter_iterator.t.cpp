@@ -1,5 +1,5 @@
 #include "codeowners/filesystem.hpp"
-#include "codeowners/path_sources.hpp"
+#include "codeowners/recursive_filter_iterator.hpp"
 
 #include <gtest/gtest.h>
 
