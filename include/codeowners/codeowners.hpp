@@ -33,17 +33,17 @@ struct pattern : public strong_typedef<pattern, std::string>,
 /// CODEOWNERS file.
 struct ownership_rule
 {
-    pattern pattern;
+    pattern file_pattern;
     std::vector<owner> owners;
 
     friend bool operator==(const ownership_rule& lhs, const ownership_rule& rhs)
     {
-        return std::tie(lhs.pattern, lhs.owners) == std::tie(rhs.pattern, rhs.owners);
+        return std::tie(lhs.file_pattern, lhs.owners) == std::tie(rhs.file_pattern, rhs.owners);
     }
 
     friend std::ostream& operator<<(std::ostream& os, const ownership_rule& rule)
     {
-        os << rule.pattern << "    ";
+        os << rule.file_pattern << "    ";
         for (const auto& owner : rule.owners)
         {
             os << owner << " ";

@@ -15,7 +15,7 @@ namespace
     make_rule_map(const std::vector<annotated_rule>& arules)
     {
         auto make_pattern_pair = [](const annotated_rule& ar) -> map_value_type {
-            return map_value_type{ar.rule.pattern, ar};
+            return map_value_type{ar.rule.file_pattern, ar};
         };
 
         auto rule_pairs = arules | ranges::views::transform(make_pattern_pair);
@@ -26,7 +26,7 @@ namespace
     {
         auto make_pattern_pair = [](annotated_rule&& ar) -> map_value_type {
             // Need to copy pattern before moving from the annotated rule.
-            pattern pat{ar.rule.pattern};
+            pattern pat{ar.rule.file_pattern};
             return map_value_type{std::move(pat), std::move(ar)};
         };
 
